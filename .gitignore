@@ -22,3 +22,9 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+output.txt
+node_modules
+dist
+.mastra
+.env
