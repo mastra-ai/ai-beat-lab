@@ -106,13 +106,16 @@ export const Sequencer = () => {
     const ctx = getAudioContext();
     ctx.resume();
 
-    window.fetch('https://mastra-test-3b7df025-7faf-4058-9684-34e9a2237830.default.mastra.cloud/api/agents/musicAgent/generate', {
+    const uri = `http://localhost:4111/api/agents/musicAgent/generate`
+    // const url = `https://mastra-test-f6ebc6bf-b666-4a3e-87bb-fa6d7bc60c48.default.mastra.cloud/api/agents/musicAgent/generate`
+
+    window.fetch(uri, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        messages: [prompt],
+        messages: [`Please make me a beautiful beat based on "${prompt}"`],
         output: {
           "$schema": "http://json-schema.org/draft-07/schema#",
           "type": "object",
@@ -224,6 +227,48 @@ export const Sequencer = () => {
               "items": {
                 "type": "integer"
               }
+            },
+            "Clap": {
+              "type": "array",
+              "items": {
+                "type": "integer"
+              }
+            },
+            "Open Hat": {
+              "type": "array",
+              "items": {
+                "type": "integer"
+              }
+            },
+            "Tom": {
+              "type": "array",
+              "items": {
+                "type": "integer"
+              }
+            },
+            "Crash": {
+              "type": "array",
+              "items": {
+                "type": "integer"
+              }
+            },
+            "Ride": {
+              "type": "array",
+              "items": {
+                "type": "integer"
+              }
+            },
+            "Shaker": {
+              "type": "array",
+              "items": {
+                "type": "integer"
+              }
+            },
+            "Cowbell": {
+              "type": "array",
+              "items": {
+                "type": "integer"
+              }
             }
           }
         }
@@ -306,7 +351,7 @@ export const Sequencer = () => {
   return (
     <div className="bg-muted rounded-lg p-6 animate-slide-in">
       <div className="flex items-center justify-between mb-6">
-        <h2 className="text-xl font-bold">Sequence Editor</h2>
+        <h1 className="text-3xl font-bold mb-8 text-primary">Mastra Music Studio</h1>
         <div className="flex gap-2">
           <Button
             variant="secondary"
