@@ -7,7 +7,7 @@ import { playNoteByName, playDrumSound, loadDrumSamples, getAudioContext } from 
 
 const STEPS = 16;
 const PIANO_NOTES = ['C5', 'B4', 'A4', 'G4', 'F4', 'E4', 'D4', 'C4', 'B3', 'A3', 'G3'];
-const DRUM_SOUNDS = ['Kick', 'Snare', 'Hi-Hat', 'Clap', 'Open Hat', 'Tom', 'Crash', 'Ride', 'Shaker', 'Cowbell'];
+const DRUM_SOUNDS = ['Kick', 'Snare', 'HiHat', 'Clap', 'OpenHat', 'Tom', 'Crash', 'Ride', 'Shaker', 'Cowbell'];
 
 export const Sequencer = () => {
   const [isPlaying, setIsPlaying] = useState(false);
@@ -96,9 +96,9 @@ export const Sequencer = () => {
             "required": [
               "Kick",
               "Snare",
-              "Hi-Hat",
+              "HiHat",
               "Clap",
-              "Open Hat",
+              "OpenHat",
               "Tom",
               "Crash",
               "Ride",
@@ -195,7 +195,7 @@ export const Sequencer = () => {
                   "type": "integer"
                 }
               },
-              "Hi-Hat": {
+              "HiHat": {
                 "type": "array",
                 "items": {
                   "type": "integer"
@@ -207,7 +207,7 @@ export const Sequencer = () => {
                   "type": "integer"
                 }
               },
-              "Open Hat": {
+              "OpenHat": {
                 "type": "array",
                 "items": {
                   "type": "integer"
@@ -246,10 +246,10 @@ export const Sequencer = () => {
             }
           }
         }),
-      });
+      })
 
       const data = await result.json();
-      
+
       const pianoSequence = {
         "C5": data.object.C5 || [],
         "B4": data.object.B4 || [],
@@ -267,9 +267,9 @@ export const Sequencer = () => {
       const drumSequence = {
         "Kick": data.object.Kick || [],
         "Snare": data.object.Snare || [],
-        "Hi-Hat": data.object?.['Hi-Hat'] || [],
+        "HiHat": data.object?.['HiHat'] || [],
         "Clap": data.object.Clap || [],
-        "Open Hat": data.object['Open-Hat'] || [],
+        "OpenHat": data.object['OpenHat'] || [],
         "Tom": data.object.Tom || [],
         "Crash": data.object.Crash || [],
         "Ride": data.object.Ride || [],
@@ -343,8 +343,8 @@ export const Sequencer = () => {
             onClick={() => isPlaying ? stopSequence() : playSequence()}
             className="h-12 w-12 rounded-full hover:bg-primary/20"
           >
-            {isPlaying ? 
-              <Pause className="h-6 w-6 text-primary" /> : 
+            {isPlaying ?
+              <Pause className="h-6 w-6 text-primary" /> :
               <Play className="h-6 w-6 text-primary" />
             }
           </Button>
@@ -377,7 +377,7 @@ export const Sequencer = () => {
           onChange={(e) => setPrompt(e.target.value)}
           className="flex-1"
         />
-        <Button 
+        <Button
           onClick={handleGenerateSequence}
           disabled={isGenerating || !prompt}
           className="min-w-[120px]"
@@ -394,7 +394,7 @@ export const Sequencer = () => {
       </div>
 
       {reference && (
-        <div 
+        <div
           className="mb-6 bg-primary/5 border border-primary/20 rounded-lg overflow-hidden transition-all duration-300"
         >
           <button

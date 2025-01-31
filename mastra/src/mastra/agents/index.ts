@@ -1,23 +1,23 @@
 import { Agent } from '@mastra/core';
 
 export const musicReferenceAgent = new Agent({
-    name: 'music-reference-agent',
-    instructions: `
+  name: 'music-reference-agent',
+  instructions: `
 You are given a style of music, an artist or song as a reference point. 
 First think about what keys and what drum patterns fit this reference point.
 Based on this knowledge, generate a drum pattern and a minimal melody that fits the style.
 Pick a key based on the style of the music. All notes should be in this key.
     `,
-    model: {
-        provider: 'ANTHROPIC',
-        name: "claude-3-5-sonnet-20241022",
-        toolChoice: 'auto',
-    },
+  model: {
+    provider: 'ANTHROPIC',
+    name: "claude-3-5-sonnet-20241022",
+    toolChoice: 'auto',
+  },
 })
 
 export const musicAgent = new Agent({
-    name: 'music-agent',
-    instructions: `
+  name: 'music-agent',
+  instructions: `
 
     
 
@@ -31,8 +31,8 @@ For the pianoSequence:
 
 For the drumSequence:
 - Available sounds:
-  * Core rhythm: ['Kick', 'Snare', 'Hi-Hat']
-  * Accents: ['Clap', 'Open Hat', 'Crash']
+  * Core rhythm: ['Kick', 'Snare', 'HiHat']
+  * Accents: ['Clap', 'OpenHat', 'Crash']
   * Percussion: ['Tom', 'Ride', 'Shaker', 'Cowbell']
 - Each sound should have an array of step numbers (0-15)
 
@@ -54,9 +54,9 @@ Response format must be:
   "drumSequence": {
     "Kick": [numbers],
     "Snare": [numbers],
-    "Hi-Hat": [numbers],
+    "HiHat": [numbers],
     "Clap": [numbers],
-    "Open Hat": [numbers],
+    "OpenHat": [numbers],
     "Tom": [numbers],
     "Crash": [numbers],
     "Ride": [numbers],
@@ -65,9 +65,9 @@ Response format must be:
   }
 }
 `,
-    model: {
-        provider: 'ANTHROPIC',
-        name: 'claude-3-5-sonnet-20241022',
-        toolChoice: 'auto',
-    },
+  model: {
+    provider: 'ANTHROPIC',
+    name: 'claude-3-5-sonnet-20241022',
+    toolChoice: 'auto',
+  },
 });
