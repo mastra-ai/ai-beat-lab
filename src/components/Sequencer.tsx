@@ -320,7 +320,7 @@ export const Sequencer = () => {
   };
 
   return (
-    <div className="bg-muted/50 backdrop-blur-sm rounded-xl p-8 shadow-xl animate-slide-in max-w-[1200px] mx-auto">
+    <div className="bg-muted/50 backdrop-blur-sm rounded-xl p-8 shadow-xl animate-slide-in w-full mx-auto">
       <div className="flex items-center justify-between mb-8">
         <div className="flex items-center gap-3">
           <Music2 className="h-8 w-8 text-primary" />
@@ -396,7 +396,7 @@ export const Sequencer = () => {
           ))}
         </div>
 
-        <div className="space-y-6 max-h-[500px] overflow-y-auto pr-2 scrollbar-thin scrollbar-thumb-primary/20 scrollbar-track-transparent">
+        <div className="space-y-4">
           <div className="text-sm font-medium text-primary mb-4">Piano Notes</div>
           {PIANO_NOTES.map(note => (
             <div key={note} className="grid grid-cols-[120px_repeat(16,1fr)] gap-1 group">
@@ -408,7 +408,7 @@ export const Sequencer = () => {
                   key={step}
                   onClick={() => togglePianoStep(note, step)}
                   className={`
-                    h-8 rounded-md cursor-pointer transition-all duration-200 transform hover:scale-95
+                    h-6 rounded-md cursor-pointer transition-all duration-200 transform hover:scale-95
                     ${pianoSequence[note]?.includes(step)
                       ? 'bg-primary shadow-lg shadow-primary/20'
                       : step === currentStep && isPlaying
@@ -421,7 +421,7 @@ export const Sequencer = () => {
           ))}
         </div>
 
-        <div className="space-y-6">
+        <div className="space-y-4 mt-8">
           <div className="text-sm font-medium text-primary mb-4">Drum Sounds</div>
           {DRUM_SOUNDS.map(sound => (
             <div key={sound} className="grid grid-cols-[120px_repeat(16,1fr)] gap-1 group">
@@ -433,7 +433,7 @@ export const Sequencer = () => {
                   key={step}
                   onClick={() => toggleDrumStep(sound, step)}
                   className={`
-                    h-8 rounded-md cursor-pointer transition-all duration-200 transform hover:scale-95
+                    h-6 rounded-md cursor-pointer transition-all duration-200 transform hover:scale-95
                     ${drumSequence[sound].includes(step)
                       ? 'bg-primary shadow-lg shadow-primary/20'
                       : step === currentStep && isPlaying
