@@ -1,10 +1,12 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Play, Pause, Square, Music2, Volume2, Settings2, Loader2, ChevronDown, ChevronUp } from 'lucide-react';
+import { Play, Pause, Square, Music2, Volume2, Settings2, Loader2, ChevronDown, ChevronUp, Share2 } from 'lucide-react';
 import { Button } from './ui/button';
 import { Input } from './ui/input';
+import { useToast } from './ui/use-toast';
 import ReactMarkdown from 'react-markdown';
 import { playNoteByName, playDrumSound, loadDrumSamples, getAudioContext } from '@/lib/audio';
 import { useIsMobile } from '@/hooks/use-mobile';
+import { useSearchParams } from 'react-router-dom';
 
 const STEPS = 16;
 const PIANO_NOTES = ['C5', 'B4', 'A4', 'G4', 'F4', 'E4', 'D4', 'C4', 'B3', 'A3', 'G3'];
@@ -35,6 +37,10 @@ export const Sequencer = () => {
   const sequencerInterval = useRef<number | null>(null);
   const [isReferenceExpanded, setIsReferenceExpanded] = useState(true);
 
+  const { toast } = useToast();
+  const [searchParams, setSearchParams] = useSearchParams();
+
+
   useEffect(() => {
     const initAudio = async () => {
       await loadDrumSamples();
@@ -48,6 +54,56 @@ export const Sequencer = () => {
       }
     };
   }, []);
+
+  useEffect(() => {
+    const loadBeatFromUrl = () => {
+      const beatData = searchParams.get('beat');
+      if (beatData) {
+        try {
+          const decoded = JSON.parse(atob(beatData));
+          setPianoSequence(decoded.piano);
+          setDrumSequence(decoded.drum);
+          toast({
+            title: "Beat loaded",
+            description: "The shared beat has been loaded successfully.",
+          });
+        } catch (error) {
+          console.error('Error loading beat from URL:', error);
+          toast({
+            title: "Error loading beat",
+            description: "Could not load the shared beat. The link might be invalid.",
+            variant: "destructive",
+          });
+        }
+      }
+    };
+
+    loadBeatFromUrl();
+  }, [searchParams, toast]);
+
+
+  const handleShare = () => {
+    const beatData = {
+      piano: pianoSequence,
+      drum: drumSequence,
+    };
+
+    const encoded = btoa(JSON.stringify(beatData));
+    const url = `${window.location.origin}${window.location.pathname}?beat=${encoded}`;
+
+    navigator.clipboard.writeText(url).then(() => {
+      toast({
+        title: "Link copied!",
+        description: "Share this link with others to let them play your beat.",
+      });
+    }).catch(() => {
+      toast({
+        title: "Couldn't copy link",
+        description: "Please try again or copy the URL manually.",
+        variant: "destructive",
+      });
+    });
+  };
 
   const togglePianoStep = (note: string, step: number) => {
     setPianoSequence(prev => ({
@@ -349,6 +405,15 @@ export const Sequencer = () => {
           </div>
         </div>
         <div className="flex items-center gap-4">
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={handleShare}
+            className="h-10 w-10 md:h-12 md:w-12 rounded-full hover:bg-primary/20"
+            title="Share beat"
+          >
+            <Share2 className="h-5 w-5 md:h-6 md:w-6 text-primary" />
+          </Button>
           <Button
             variant="ghost"
             size="icon"
