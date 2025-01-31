@@ -33,20 +33,25 @@ export const playNote = (frequency: number, duration: number = 0.5) => {
 
 // Convert note names to frequencies
 const NOTE_FREQUENCIES: { [key: string]: number } = {
-  'C3': 130.81,
-  'D3': 146.83,
-  'E3': 164.81,
-  'F3': 174.61,
-  'G3': 196.00,
-  'A3': 220.00,
-  'B3': 246.94,
+  'C5': 523.25,
+  'B4': 493.88,
+  'A4': 440.00,
+  'G4': 392.00,
+  'F4': 349.23,
+  'E4': 329.63,
+  'D4': 293.66,
   'C4': 261.63,
+  'B3': 246.94,
+  'A3': 220.00,
+  'G3': 196.00
 };
 
 export const playNoteByName = (noteName: string) => {
   const frequency = NOTE_FREQUENCIES[noteName];
   if (frequency) {
     playNote(frequency);
+  } else {
+    console.warn(`No frequency found for note: ${noteName}`);
   }
 };
 
