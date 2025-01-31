@@ -62,7 +62,7 @@ export const Sequencer = () => {
     PIANO_NOTES.forEach(note => {
       const steps: number[] = [];
       const numberOfSteps = isJazz ? 4 : (isUpbeat ? 6 : 3); // Jazz uses fewer, more strategic notes
-      
+
       while (steps.length < numberOfSteps) {
         const step = Math.floor(Math.random() * STEPS);
         if (!steps.includes(step)) {
@@ -76,7 +76,7 @@ export const Sequencer = () => {
     DRUM_SOUNDS.forEach(sound => {
       const steps: number[] = [];
       let numberOfSteps;
-      
+
       if (sound === 'Kick') {
         numberOfSteps = hasHeavyKicks ? 8 : 4;
       } else if (sound === 'Hi-Hat') {
@@ -99,45 +99,110 @@ export const Sequencer = () => {
 
   const handleGenerateSequence = () => {
     if (!prompt) return;
-    
+
+    window.fetch('https://mastra-test-3b7df025-7faf-4058-9684-34e9a2237830.default.mastra.cloud/api/agents/musicAgent/generate', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        messages: [prompt],
+        output: {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["Kick", "Snare", "Hi-Hat", "C4", "B3", "A3", "G3"],
+          "properties": {
+            "C4": {
+              "type": "array",
+              "items": {
+                "type": "integer"
+              }
+            },
+            "B3": {
+              "type": "array",
+              "items": {
+                "type": "integer"
+              }
+            },
+            "A3": {
+              "type": "array",
+              "items": {
+                "type": "integer"
+              }
+            },
+            "G3": {
+              "type": "array",
+              "items": {
+                "type": "integer"
+              }
+            },
+            "Kick": {
+              "type": "array",
+              "items": {
+                "type": "integer"
+              }
+            },
+            "Snare": {
+              "type": "array",
+              "items": {
+                "type": "integer"
+              }
+            },
+            "Hi-Hat": {
+              "type": "array",
+              "items": {
+                "type": "integer"
+              }
+            }
+          }
+        }
+      }),
+    }).then(res => res.json()).then(data => {
+      console.log(data.object);
+
+      const drumSequence = {
+        'Kick': data.object.Kick || [],
+        'Snare': data.object.Snare || [],
+        'Hi-Hat': data.object['Hi-Hat'] || [],
+      }
+
+      setDrumSequence(drumSequence);
+    })
+
     // Simulate API call delay
-    const { newPianoSequence, newDrumSequence } = generateRandomSequence();
-    
+    const { newPianoSequence } = generateRandomSequence();
+
     // Update sequences
     setPianoSequence(newPianoSequence);
-    setDrumSequence(newDrumSequence);
 
     // Stop any existing playback
     stopSequence();
-    
-    // Start playing the new sequence
-    setTimeout(() => {
-      playSequence();
-    }, 100); // Small delay to ensure state is updated
+
   };
 
   const playSequence = () => {
     setIsPlaying(true);
     setCurrentStep(0);
-    
+
     sequencerInterval.current = window.setInterval(() => {
       setCurrentStep(prev => {
         const nextStep = (prev + 1) % STEPS;
-        
+
         // Play piano notes for current step
         Object.entries(pianoSequence).forEach(([note, steps]) => {
           if (steps.includes(prev)) {
             playNoteByName(note);
           }
         });
-        
+
         // Play drum sounds for current step
         Object.entries(drumSequence).forEach(([sound, steps]) => {
           if (steps.includes(prev)) {
             playDrumSound(sound);
           }
         });
-        
+
         return nextStep;
       });
     }, 200); // 120 BPM
@@ -216,8 +281,8 @@ export const Sequencer = () => {
                     ${pianoSequence[note].includes(step)
                       ? 'bg-primary'
                       : step === currentStep && isPlaying
-                      ? 'bg-primary/30'
-                      : 'bg-secondary hover:bg-secondary/80'}
+                        ? 'bg-primary/30'
+                        : 'bg-secondary hover:bg-secondary/80'}
                   `}
                 />
               ))}
@@ -240,8 +305,8 @@ export const Sequencer = () => {
                     ${drumSequence[sound].includes(step)
                       ? 'bg-primary'
                       : step === currentStep && isPlaying
-                      ? 'bg-primary/30'
-                      : 'bg-secondary hover:bg-secondary/80'}
+                        ? 'bg-primary/30'
+                        : 'bg-secondary hover:bg-secondary/80'}
                   `}
                 />
               ))}
