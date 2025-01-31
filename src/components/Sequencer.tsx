@@ -5,7 +5,7 @@ import { Input } from './ui/input';
 import { playNoteByName, playDrumSound, loadDrumSamples, getAudioContext } from '@/lib/audio';
 
 const STEPS = 16;
-const PIANO_NOTES = ['C4', 'B3', 'A3', 'G3'];
+const PIANO_NOTES = ['C5', 'B4', 'A4', 'G4', 'F4', 'E4', 'D4', 'C4', 'B3', 'A3', 'G3'];
 const DRUM_SOUNDS = ['Kick', 'Snare', 'Hi-Hat'];
 
 export const Sequencer = () => {
@@ -278,7 +278,7 @@ export const Sequencer = () => {
           ))}
         </div>
 
-        <div className="space-y-1">
+        <div className="space-y-1 max-h-[500px] overflow-y-auto">
           <div className="text-sm font-medium mb-2">Piano Notes</div>
           {PIANO_NOTES.map(note => (
             <div key={note} className="grid grid-cols-[120px_repeat(16,1fr)] gap-1">
@@ -289,7 +289,7 @@ export const Sequencer = () => {
                   onClick={() => togglePianoStep(note, step)}
                   className={`
                     h-8 rounded cursor-pointer transition-colors
-                    ${pianoSequence[note].includes(step)
+                    ${pianoSequence[note]?.includes(step)
                       ? 'bg-primary'
                       : step === currentStep && isPlaying
                         ? 'bg-primary/30'
