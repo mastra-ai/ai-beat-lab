@@ -106,6 +106,14 @@ export const Sequencer = () => {
     // Update sequences
     setPianoSequence(newPianoSequence);
     setDrumSequence(newDrumSequence);
+
+    // Stop any existing playback
+    stopSequence();
+    
+    // Start playing the new sequence
+    setTimeout(() => {
+      playSequence();
+    }, 100); // Small delay to ensure state is updated
   };
 
   const playSequence = () => {
