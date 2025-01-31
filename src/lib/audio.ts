@@ -4,6 +4,8 @@ let audioContext: AudioContext | null = null;
 export const getAudioContext = () => {
   if (!audioContext) {
     audioContext = new AudioContext();
+    // Resume audio context on creation to handle auto-play restrictions
+    audioContext.resume();
   }
   return audioContext;
 };
@@ -58,6 +60,10 @@ const drumSamples: { [key: string]: AudioBuffer | null } = {
 
 export const loadDrumSamples = async () => {
   const ctx = getAudioContext();
+  
+  // Resume the audio context to handle auto-play policy
+  await ctx.resume();
+  
   const sampleUrls = {
     'Kick': '/samples/kick.wav',
     'Snare': '/samples/snare.wav',
@@ -75,13 +81,19 @@ export const loadDrumSamples = async () => {
       drumSamples[name] = await ctx.decodeAudioData(arrayBuffer);
       console.log(`Successfully loaded drum sample: ${name}`);
     } catch (error) {
-      console.warn(`Failed to load drum sample: ${name}`, error);
+      console.error(`Failed to load drum sample: ${name}`, error);
     }
   }
 };
 
-export const playDrumSound = (name: string) => {
+export const playDrumSound = async (name: string) => {
   const ctx = getAudioContext();
+  
+  // Ensure context is running
+  if (ctx.state !== 'running') {
+    await ctx.resume();
+  }
+  
   const buffer = drumSamples[name];
 
   if (buffer) {
