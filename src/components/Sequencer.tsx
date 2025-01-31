@@ -167,6 +167,13 @@ export const Sequencer = () => {
     }).then(res => res.json()).then(data => {
       console.log(data.object);
 
+      const pianoSequence = {
+        'C4': data.object.C4 || [],
+        'B3': data.object.B3 || [],
+        'A3': data.object.A3 || [],
+        'G3': data.object.G3 || [],
+      }
+
       const drumSequence = {
         'Kick': data.object.Kick || [],
         'Snare': data.object.Snare || [],
@@ -174,17 +181,16 @@ export const Sequencer = () => {
       }
 
       setDrumSequence(drumSequence);
-    });
+      setPianoSequence(pianoSequence);
 
-    const { newPianoSequence } = generateRandomSequence();
-    setPianoSequence(newPianoSequence);
-    stopSequence();
+      stopSequence();
+    });
   };
 
   const playSequence = () => {
     const ctx = getAudioContext();
     ctx.resume();
-    
+
     setIsPlaying(true);
     setCurrentStep(0);
 
