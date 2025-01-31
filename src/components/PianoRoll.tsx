@@ -1,13 +1,29 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Play, Square, Volume2 } from 'lucide-react';
+import { getAudioContext, playNoteByName } from '@/lib/audio';
 
 const notes = ['C4', 'B3', 'A3', 'G3', 'F3', 'E3', 'D3', 'C3'];
 
 export const PianoRoll = () => {
   const [activeNotes, setActiveNotes] = useState<string[]>([]);
   const [isPlaying, setIsPlaying] = useState(false);
+  const [volume, setVolume] = useState(75);
+
+  useEffect(() => {
+    // Initialize audio context on first user interaction
+    const initAudio = () => {
+      const ctx = getAudioContext();
+      if (ctx.state === 'suspended') {
+        ctx.resume();
+      }
+    };
+    
+    document.addEventListener('click', initAudio, { once: true });
+    return () => document.removeEventListener('click', initAudio);
+  }, []);
 
   const toggleNote = (note: string) => {
+    playNoteByName(note);
     setActiveNotes(prev => 
       prev.includes(note) 
         ? prev.filter(n => n !== note)
@@ -34,7 +50,8 @@ export const PianoRoll = () => {
             type="range" 
             min="0" 
             max="100" 
-            defaultValue="75"
+            value={volume}
+            onChange={(e) => setVolume(Number(e.target.value))}
             className="w-32"
           />
         </div>

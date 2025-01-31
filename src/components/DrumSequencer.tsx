@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { loadDrumSamples, playDrumSound } from '@/lib/audio';
 
 const drumSounds = ['Kick', 'Snare', 'Hi-Hat', 'Clap'];
 const steps = Array.from({ length: 8 }, (_, i) => i);
@@ -11,7 +12,12 @@ export const DrumSequencer = () => {
     Clap: [],
   });
 
+  useEffect(() => {
+    loadDrumSamples();
+  }, []);
+
   const toggleStep = (sound: string, step: number) => {
+    playDrumSound(sound);
     setActiveSteps(prev => ({
       ...prev,
       [sound]: prev[sound].includes(step)
