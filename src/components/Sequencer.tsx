@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Play, Pause, Square, Music2, Volume2, Settings2, Loader2 } from 'lucide-react';
+import { Play, Pause, Square, Music2, Volume2, Settings2, Loader2, ChevronDown, ChevronUp } from 'lucide-react';
 import { Button } from './ui/button';
 import { Input } from './ui/input';
 import ReactMarkdown from 'react-markdown';
@@ -23,6 +23,7 @@ export const Sequencer = () => {
   );
   const [isGenerating, setIsGenerating] = useState(false);
   const sequencerInterval = useRef<number | null>(null);
+  const [isReferenceExpanded, setIsReferenceExpanded] = useState(true);
 
   useEffect(() => {
     const initAudio = async () => {
@@ -393,23 +394,40 @@ export const Sequencer = () => {
       </div>
 
       {reference && (
-        <div className="mb-6 p-4 bg-primary/5 border border-primary/20 rounded-lg">
-          <div className="flex gap-3">
-            <Settings2 className="h-5 w-5 flex-shrink-0 mt-1 text-primary/80" />
-            <div className="prose prose-invert prose-sm max-w-none w-full">
-              <ReactMarkdown
-                components={{
-                  p: ({ children }) => <p className="text-primary/90 leading-relaxed mb-2">{children}</p>,
-                  ul: ({ children }) => <ul className="list-disc list-inside space-y-1 text-primary/90">{children}</ul>,
-                  li: ({ children }) => <li className="text-primary/90">{children}</li>,
-                  strong: ({ children }) => <strong className="font-semibold text-primary">{children}</strong>,
-                  em: ({ children }) => <em className="text-primary/90 italic">{children}</em>,
-                }}
-              >
-                {reference}
-              </ReactMarkdown>
+        <div 
+          className="mb-6 bg-primary/5 border border-primary/20 rounded-lg overflow-hidden transition-all duration-300"
+        >
+          <button
+            onClick={() => setIsReferenceExpanded(!isReferenceExpanded)}
+            className="w-full p-4 flex items-center justify-between text-left hover:bg-primary/10 transition-colors"
+          >
+            <div className="flex items-center gap-3">
+              <Settings2 className="h-5 w-5 flex-shrink-0 text-primary/80" />
+              <span className="font-medium text-primary">AI Music Analysis</span>
             </div>
-          </div>
+            {isReferenceExpanded ? (
+              <ChevronUp className="h-5 w-5 text-primary/60" />
+            ) : (
+              <ChevronDown className="h-5 w-5 text-primary/60" />
+            )}
+          </button>
+          {isReferenceExpanded && (
+            <div className="p-4 pt-0">
+              <div className="prose prose-invert prose-sm max-w-none w-full">
+                <ReactMarkdown
+                  components={{
+                    p: ({ children }) => <p className="text-primary/90 leading-relaxed mb-2">{children}</p>,
+                    ul: ({ children }) => <ul className="list-disc list-inside space-y-1 text-primary/90">{children}</ul>,
+                    li: ({ children }) => <li className="text-primary/90">{children}</li>,
+                    strong: ({ children }) => <strong className="font-semibold text-primary">{children}</strong>,
+                    em: ({ children }) => <em className="text-primary/90 italic">{children}</em>,
+                  }}
+                >
+                  {reference}
+                </ReactMarkdown>
+              </div>
+            </div>
+          )}
         </div>
       )}
 
