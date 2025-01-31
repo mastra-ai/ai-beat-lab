@@ -366,52 +366,8 @@ export const Sequencer = () => {
         </div>
       )}
 
-      <div className="flex gap-4 mb-6">
-        <Input
-          placeholder="Enter your music prompt..."
-          value={prompt}
-          onChange={(e) => setPrompt(e.target.value)}
-          className="flex-1"
-        />
-        <Button 
-          onClick={handleGenerateSequence}
-          disabled={isGenerating || !prompt}
-          className="min-w-[120px]"
-        >
-          {isGenerating ? (
-            <>
-              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-              Generating...
-            </>
-          ) : (
-            'Generate'
-          )}
-        </Button>
-      </div>
-
-      {reference && (
-        <div className="mb-6 p-4 bg-primary/5 border border-primary/20 rounded-lg">
-          <div className="flex gap-3">
-            <Settings2 className="h-5 w-5 flex-shrink-0 mt-1 text-primary/80" />
-            <div className="prose prose-invert prose-sm max-w-none w-full">
-              <ReactMarkdown
-                components={{
-                  p: ({ children }) => <p className="text-primary/90 leading-relaxed mb-2">{children}</p>,
-                  ul: ({ children }) => <ul className="list-disc list-inside space-y-1 text-primary/90">{children}</ul>,
-                  li: ({ children }) => <li className="text-primary/90">{children}</li>,
-                  strong: ({ children }) => <strong className="font-semibold text-primary">{children}</strong>,
-                  em: ({ children }) => <em className="text-primary/90 italic">{children}</em>,
-                }}
-              >
-                {reference}
-              </ReactMarkdown>
-            </div>
-          </div>
-        </div>
-      )}
-
-      <div className="space-y-8">
-        <div className="grid grid-cols-[120px_repeat(16,40px)] gap-1">
+      <div className="space-y-6">
+        <div className="grid grid-cols-[100px_repeat(16,32px)] gap-0.5">
           <div className="text-sm font-medium text-primary/80">Steps</div>
           {Array.from({ length: STEPS }, (_, i) => (
             <div key={i} className="text-center text-xs text-primary/60">
@@ -420,10 +376,10 @@ export const Sequencer = () => {
           ))}
         </div>
 
-        <div className="space-y-4">
-          <div className="text-sm font-medium text-primary mb-4">Piano Notes</div>
+        <div className="space-y-3">
+          <div className="text-sm font-medium text-primary mb-2">Piano Notes</div>
           {PIANO_NOTES.map(note => (
-            <div key={note} className="grid grid-cols-[120px_repeat(16,40px)] gap-1 group">
+            <div key={note} className="grid grid-cols-[100px_repeat(16,32px)] gap-0.5 group">
               <div className="text-sm text-primary/80 group-hover:text-primary transition-colors">
                 {note}
               </div>
@@ -432,7 +388,7 @@ export const Sequencer = () => {
                   key={step}
                   onClick={() => togglePianoStep(note, step)}
                   className={`
-                    aspect-square rounded-md cursor-pointer transition-all duration-200 transform hover:scale-95
+                    aspect-square rounded-sm cursor-pointer transition-all duration-200 transform hover:scale-95
                     ${pianoSequence[note]?.includes(step)
                       ? 'bg-primary shadow-lg shadow-primary/20'
                       : step === currentStep && isPlaying
@@ -445,10 +401,10 @@ export const Sequencer = () => {
           ))}
         </div>
 
-        <div className="space-y-4 mt-8">
-          <div className="text-sm font-medium text-primary mb-4">Drum Sounds</div>
+        <div className="space-y-3 mt-6">
+          <div className="text-sm font-medium text-primary mb-2">Drum Sounds</div>
           {DRUM_SOUNDS.map(sound => (
-            <div key={sound} className="grid grid-cols-[120px_repeat(16,40px)] gap-1 group">
+            <div key={sound} className="grid grid-cols-[100px_repeat(16,32px)] gap-0.5 group">
               <div className="text-sm text-primary/80 group-hover:text-primary transition-colors">
                 {sound}
               </div>
@@ -457,7 +413,7 @@ export const Sequencer = () => {
                   key={step}
                   onClick={() => toggleDrumStep(sound, step)}
                   className={`
-                    aspect-square rounded-md cursor-pointer transition-all duration-200 transform hover:scale-95
+                    aspect-square rounded-sm cursor-pointer transition-all duration-200 transform hover:scale-95
                     ${drumSequence[sound].includes(step)
                       ? 'bg-primary shadow-lg shadow-primary/20'
                       : step === currentStep && isPlaying
