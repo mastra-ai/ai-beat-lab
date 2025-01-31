@@ -1,11 +1,13 @@
-// Update this page (the content is just a fallback if you fail to update the page)
+import { PianoRoll } from "@/components/PianoRoll";
+import { DrumSequencer } from "@/components/DrumSequencer";
 
 const Index = () => {
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100">
-      <div className="text-center">
-        <h1 className="text-4xl font-bold mb-4">Welcome to Your Blank App</h1>
-        <p className="text-xl text-gray-600">Start building your amazing project here!</p>
+    <div className="min-h-screen p-8">
+      <h1 className="text-3xl font-bold mb-8 text-primary">Web Music Studio</h1>
+      <div className="max-w-4xl mx-auto">
+        <PianoRoll />
+        <DrumSequencer />
       </div>
     </div>
   );
