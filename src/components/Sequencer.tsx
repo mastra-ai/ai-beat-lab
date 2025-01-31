@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Play, Pause, Square, Music2, Volume2, Settings2, Loader2 } from 'lucide-react';
 import { Button } from './ui/button';
 import { Input } from './ui/input';
+import ReactMarkdown from 'react-markdown';
 import { playNoteByName, playDrumSound, loadDrumSamples, getAudioContext } from '@/lib/audio';
 
 const STEPS = 16;
@@ -367,10 +368,12 @@ export const Sequencer = () => {
 
       {reference && (
         <div className="mb-6 p-4 bg-primary/5 border border-primary/20 rounded-lg text-primary/90">
-          <p className="flex items-center gap-2">
-            <Settings2 className="h-5 w-5" />
-            {reference}
-          </p>
+          <div className="flex items-center gap-2">
+            <Settings2 className="h-5 w-5 flex-shrink-0" />
+            <div className="prose prose-invert prose-sm max-w-none">
+              <ReactMarkdown>{reference}</ReactMarkdown>
+            </div>
+          </div>
         </div>
       )}
 
