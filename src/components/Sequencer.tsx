@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Play, Pause, Square } from 'lucide-react';
 import { Button } from './ui/button';
+import { Input } from './ui/input';
 import { playNoteByName, playDrumSound } from '@/lib/audio';
 
 const STEPS = 16;
@@ -10,6 +11,7 @@ const DRUM_SOUNDS = ['Kick', 'Snare', 'Hi-Hat'];
 export const Sequencer = () => {
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentStep, setCurrentStep] = useState(0);
+  const [prompt, setPrompt] = useState('');
   const [pianoSequence, setPianoSequence] = useState<Record<string, number[]>>(
     Object.fromEntries(PIANO_NOTES.map(note => [note, []]))
   );
@@ -44,6 +46,11 @@ export const Sequencer = () => {
         : [...prev[sound], step],
     }));
     playDrumSound(sound);
+  };
+
+  const handleGenerateSequence = () => {
+    // TODO: Implement AI generation based on prompt
+    console.log("Generating sequence for prompt:", prompt);
   };
 
   const playSequence = () => {
@@ -106,6 +113,18 @@ export const Sequencer = () => {
             </Button>
           )}
         </div>
+      </div>
+
+      <div className="flex gap-2 mb-6">
+        <Input
+          placeholder="Describe the beat you want (e.g. 'upbeat jazz rhythm with heavy kicks')"
+          value={prompt}
+          onChange={(e) => setPrompt(e.target.value)}
+          className="flex-1"
+        />
+        <Button onClick={handleGenerateSequence}>
+          Generate
+        </Button>
       </div>
 
       <div className="space-y-6">
