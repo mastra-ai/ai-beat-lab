@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Play, Pause, Square } from 'lucide-react';
+import { Play, Pause, Square, Music2, Volume2, Settings2 } from 'lucide-react';
 import { Button } from './ui/button';
 import { Input } from './ui/input';
 import { playNoteByName, playDrumSound, loadDrumSamples, getAudioContext } from '@/lib/audio';
@@ -320,81 +320,100 @@ export const Sequencer = () => {
   };
 
   return (
-    <div className="bg-muted rounded-lg p-6 animate-slide-in">
-      <div className="flex items-center justify-between mb-6">
-        <h1 className="text-3xl font-bold mb-8 text-primary">Mastra Music Studio</h1>
-        <div className="flex gap-2">
+    <div className="bg-muted/50 backdrop-blur-sm rounded-xl p-8 shadow-xl animate-slide-in max-w-[1200px] mx-auto">
+      <div className="flex items-center justify-between mb-8">
+        <div className="flex items-center gap-3">
+          <Music2 className="h-8 w-8 text-primary" />
+          <h1 className="text-4xl font-bold bg-gradient-to-r from-primary to-primary/60 bg-clip-text text-transparent">
+            Mastra Music Studio
+          </h1>
+        </div>
+        <div className="flex items-center gap-4">
           <Button
-            variant="secondary"
+            variant="ghost"
             size="icon"
             onClick={() => isPlaying ? stopSequence() : playSequence()}
-            className="transport-button"
+            className="h-12 w-12 rounded-full hover:bg-primary/20"
           >
-            {isPlaying ? <Pause className="h-4 w-4" /> : <Play className="h-4 w-4" />}
+            {isPlaying ? 
+              <Pause className="h-6 w-6 text-primary" /> : 
+              <Play className="h-6 w-6 text-primary" />
+            }
           </Button>
           {isPlaying && (
             <Button
-              variant="secondary"
+              variant="ghost"
               size="icon"
               onClick={stopSequence}
-              className="transport-button"
+              className="h-12 w-12 rounded-full hover:bg-primary/20"
             >
-              <Square className="h-4 w-4" />
+              <Square className="h-6 w-6 text-primary" />
             </Button>
           )}
         </div>
       </div>
 
       {!isAudioInitialized && (
-        <div className="mb-4 p-4 bg-yellow-100 rounded-lg text-black">
-          <p>Loading audio samples...</p>
+        <div className="mb-6 p-4 bg-yellow-100/10 border border-yellow-400/20 rounded-lg text-yellow-200">
+          <p className="flex items-center gap-2">
+            <Volume2 className="h-5 w-5" />
+            Loading audio samples...
+          </p>
         </div>
       )}
 
       {reference && (
-        <div className="mb-4 p-4 bg-yellow-100 rounded-lg text-black">
-          <p>{reference}</p>
+        <div className="mb-6 p-4 bg-primary/5 border border-primary/20 rounded-lg text-primary/90">
+          <p className="flex items-center gap-2">
+            <Settings2 className="h-5 w-5" />
+            {reference}
+          </p>
         </div>
       )}
 
-      <div className="flex gap-2 mb-6">
+      <div className="flex gap-4 mb-8">
         <Input
           placeholder="Describe the beat you want (e.g. 'upbeat jazz rhythm with heavy kicks')"
           value={prompt}
           onChange={(e) => setPrompt(e.target.value)}
-          className="flex-1"
+          className="flex-1 bg-background/50 border-primary/20 focus:border-primary"
         />
-        <Button onClick={handleGenerateSequence}>
+        <Button 
+          onClick={handleGenerateSequence}
+          className="px-8 bg-primary text-primary-foreground hover:bg-primary/90"
+        >
           Generate
         </Button>
       </div>
 
-      <div className="space-y-6">
+      <div className="space-y-8">
         <div className="grid grid-cols-[120px_repeat(16,1fr)] gap-1">
-          <div className="text-sm font-medium">Steps</div>
+          <div className="text-sm font-medium text-primary/80">Steps</div>
           {Array.from({ length: STEPS }, (_, i) => (
-            <div key={i} className="text-center text-xs text-gray-400">
+            <div key={i} className="text-center text-xs text-primary/60">
               {i + 1}
             </div>
           ))}
         </div>
 
-        <div className="space-y-1 max-h-[500px] overflow-y-auto">
-          <div className="text-sm font-medium mb-2">Piano Notes</div>
+        <div className="space-y-6 max-h-[500px] overflow-y-auto pr-2 scrollbar-thin scrollbar-thumb-primary/20 scrollbar-track-transparent">
+          <div className="text-sm font-medium text-primary mb-4">Piano Notes</div>
           {PIANO_NOTES.map(note => (
-            <div key={note} className="grid grid-cols-[120px_repeat(16,1fr)] gap-1">
-              <div className="text-sm">{note}</div>
+            <div key={note} className="grid grid-cols-[120px_repeat(16,1fr)] gap-1 group">
+              <div className="text-sm text-primary/80 group-hover:text-primary transition-colors">
+                {note}
+              </div>
               {Array.from({ length: STEPS }, (_, step) => (
                 <div
                   key={step}
                   onClick={() => togglePianoStep(note, step)}
                   className={`
-                    h-8 rounded cursor-pointer transition-colors
+                    h-8 rounded-md cursor-pointer transition-all duration-200 transform hover:scale-95
                     ${pianoSequence[note]?.includes(step)
-                      ? 'bg-primary'
+                      ? 'bg-primary shadow-lg shadow-primary/20'
                       : step === currentStep && isPlaying
                         ? 'bg-primary/30'
-                        : 'bg-secondary hover:bg-secondary/80'}
+                        : 'bg-secondary/40 hover:bg-secondary/60'}
                   `}
                 />
               ))}
@@ -402,22 +421,24 @@ export const Sequencer = () => {
           ))}
         </div>
 
-        <div className="space-y-1">
-          <div className="text-sm font-medium mb-2">Drum Sounds</div>
+        <div className="space-y-6">
+          <div className="text-sm font-medium text-primary mb-4">Drum Sounds</div>
           {DRUM_SOUNDS.map(sound => (
-            <div key={sound} className="grid grid-cols-[120px_repeat(16,1fr)] gap-1">
-              <div className="text-sm">{sound}</div>
+            <div key={sound} className="grid grid-cols-[120px_repeat(16,1fr)] gap-1 group">
+              <div className="text-sm text-primary/80 group-hover:text-primary transition-colors">
+                {sound}
+              </div>
               {Array.from({ length: STEPS }, (_, step) => (
                 <div
                   key={step}
                   onClick={() => toggleDrumStep(sound, step)}
                   className={`
-                    h-8 rounded cursor-pointer transition-colors
+                    h-8 rounded-md cursor-pointer transition-all duration-200 transform hover:scale-95
                     ${drumSequence[sound].includes(step)
-                      ? 'bg-primary'
+                      ? 'bg-primary shadow-lg shadow-primary/20'
                       : step === currentStep && isPlaying
                         ? 'bg-primary/30'
-                        : 'bg-secondary hover:bg-secondary/80'}
+                        : 'bg-secondary/40 hover:bg-secondary/60'}
                   `}
                 />
               ))}
@@ -428,4 +449,3 @@ export const Sequencer = () => {
     </div>
   );
 };
-
