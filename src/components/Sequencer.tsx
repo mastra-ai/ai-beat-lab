@@ -4,6 +4,7 @@ import { Button } from './ui/button';
 import { Input } from './ui/input';
 import ReactMarkdown from 'react-markdown';
 import { playNoteByName, playDrumSound, loadDrumSamples, getAudioContext } from '@/lib/audio';
+import { useIsMobile } from '@/hooks/use-mobile';
 
 const STEPS = 16;
 const PIANO_NOTES = ['C5', 'B4', 'A4', 'G4', 'F4', 'E4', 'D4', 'C4', 'B3', 'A3', 'G3'];
@@ -324,16 +325,18 @@ export const Sequencer = () => {
     setCurrentStep(0);
   };
 
+  const isMobile = useIsMobile();
+
   return (
-    <div className="bg-muted/50 backdrop-blur-sm rounded-xl p-8 shadow-xl animate-slide-in w-full mx-auto">
-      <div className="flex items-center justify-between mb-8">
+    <div className="bg-muted/50 backdrop-blur-sm rounded-xl p-4 md:p-8 shadow-xl animate-slide-in w-full mx-auto">
+      <div className="flex flex-col md:flex-row md:items-center justify-between mb-6 md:mb-8 gap-4">
         <div className="flex items-center gap-3">
-          <Music2 className="h-8 w-8 text-primary" />
-          <div className="space-y-1">
-            <h1 className="text-4xl font-bold bg-gradient-to-r from-primary to-primary/60 bg-clip-text text-transparent">
+          <Music2 className="h-6 w-6 md:h-8 md:w-8 text-primary" />
+          <div className="space-y-0.5 md:space-y-1">
+            <h1 className="text-2xl md:text-4xl font-bold bg-gradient-to-r from-primary to-primary/60 bg-clip-text text-transparent">
               AI Beat Laboratory
             </h1>
-            <p className="text-sm text-primary/70">Where AI drops beats and humans drop jaws</p>
+            <p className="text-xs md:text-sm text-primary/70">Where AI drops beats and humans drop jaws</p>
           </div>
         </div>
         <div className="flex items-center gap-4">
@@ -341,11 +344,11 @@ export const Sequencer = () => {
             variant="ghost"
             size="icon"
             onClick={() => isPlaying ? stopSequence() : playSequence()}
-            className="h-12 w-12 rounded-full hover:bg-primary/20"
+            className="h-10 w-10 md:h-12 md:w-12 rounded-full hover:bg-primary/20"
           >
             {isPlaying ?
-              <Pause className="h-6 w-6 text-primary" /> :
-              <Play className="h-6 w-6 text-primary" />
+              <Pause className="h-5 w-5 md:h-6 md:w-6 text-primary" /> :
+              <Play className="h-5 w-5 md:h-6 md:w-6 text-primary" />
             }
           </Button>
           {isPlaying && (
@@ -353,34 +356,34 @@ export const Sequencer = () => {
               variant="ghost"
               size="icon"
               onClick={stopSequence}
-              className="h-12 w-12 rounded-full hover:bg-primary/20"
+              className="h-10 w-10 md:h-12 md:w-12 rounded-full hover:bg-primary/20"
             >
-              <Square className="h-6 w-6 text-primary" />
+              <Square className="h-5 w-5 md:h-6 md:w-6 text-primary" />
             </Button>
           )}
         </div>
       </div>
 
       {!isAudioInitialized && (
-        <div className="mb-6 p-4 bg-yellow-100/10 border border-yellow-400/20 rounded-lg text-yellow-200">
-          <p className="flex items-center gap-2">
-            <Volume2 className="h-5 w-5" />
+        <div className="mb-4 md:mb-6 p-3 md:p-4 bg-yellow-100/10 border border-yellow-400/20 rounded-lg text-yellow-200">
+          <p className="flex items-center gap-2 text-sm md:text-base">
+            <Volume2 className="h-4 w-4 md:h-5 md:w-5" />
             Loading audio samples...
           </p>
         </div>
       )}
 
-      <div className="flex gap-4 mb-6">
+      <div className="flex flex-col gap-4 mb-6">
         <Input
           placeholder="Enter your music prompt..."
           value={prompt}
           onChange={(e) => setPrompt(e.target.value)}
-          className="flex-1"
+          className="w-full text-sm md:text-base"
         />
         <Button
           onClick={handleGenerateSequence}
           disabled={isGenerating || !prompt}
-          className="min-w-[120px]"
+          className="w-full md:w-auto md:ml-auto"
         >
           {isGenerating ? (
             <>
@@ -394,31 +397,29 @@ export const Sequencer = () => {
       </div>
 
       {reference && (
-        <div
-          className="mb-6 bg-primary/5 border border-primary/20 rounded-lg overflow-hidden transition-all duration-300"
-        >
+        <div className="mb-6 bg-primary/5 border border-primary/20 rounded-lg overflow-hidden transition-all duration-300">
           <button
             onClick={() => setIsReferenceExpanded(!isReferenceExpanded)}
-            className="w-full p-4 flex items-center justify-between text-left hover:bg-primary/10 transition-colors"
+            className="w-full p-3 md:p-4 flex items-center justify-between text-left hover:bg-primary/10 transition-colors"
           >
-            <div className="flex items-center gap-3">
-              <Settings2 className="h-5 w-5 flex-shrink-0 text-primary/80" />
-              <span className="font-medium text-primary">AI Music Analysis</span>
+            <div className="flex items-center gap-2 md:gap-3">
+              <Settings2 className="h-4 w-4 md:h-5 md:w-5 flex-shrink-0 text-primary/80" />
+              <span className="font-medium text-primary text-sm md:text-base">AI Music Analysis</span>
             </div>
             {isReferenceExpanded ? (
-              <ChevronUp className="h-5 w-5 text-primary/60" />
+              <ChevronUp className="h-4 w-4 md:h-5 md:w-5 text-primary/60" />
             ) : (
-              <ChevronDown className="h-5 w-5 text-primary/60" />
+              <ChevronDown className="h-4 w-4 md:h-5 md:w-5 text-primary/60" />
             )}
           </button>
           {isReferenceExpanded && (
-            <div className="p-4 pt-0">
-              <div className="max-h-[200px] overflow-y-auto scrollbar-thin scrollbar-thumb-primary/20 scrollbar-track-transparent prose prose-invert prose-sm max-w-none w-full">
+            <div className="p-3 md:p-4 pt-0">
+              <div className="max-h-[150px] md:max-h-[200px] overflow-y-auto scrollbar-thin scrollbar-thumb-primary/20 scrollbar-track-transparent prose prose-invert prose-sm max-w-none w-full">
                 <ReactMarkdown
                   components={{
-                    p: ({ children }) => <p className="text-primary/90 leading-relaxed mb-2">{children}</p>,
+                    p: ({ children }) => <p className="text-primary/90 leading-relaxed mb-2 text-sm md:text-base">{children}</p>,
                     ul: ({ children }) => <ul className="list-disc list-inside space-y-1 text-primary/90">{children}</ul>,
-                    li: ({ children }) => <li className="text-primary/90">{children}</li>,
+                    li: ({ children }) => <li className="text-primary/90 text-sm md:text-base">{children}</li>,
                     strong: ({ children }) => <strong className="font-semibold text-primary">{children}</strong>,
                     em: ({ children }) => <em className="text-primary/90 italic">{children}</em>,
                   }}
@@ -431,9 +432,9 @@ export const Sequencer = () => {
         </div>
       )}
 
-      <div className="space-y-6">
-        <div className="grid grid-cols-[100px_repeat(16,32px)] gap-1.5">
-          <div className="text-sm font-medium text-primary/80">Steps</div>
+      <div className="space-y-6 overflow-x-auto pb-4">
+        <div className="grid grid-cols-[100px_repeat(16,32px)] gap-1.5 min-w-[612px]">
+          <div className="text-xs md:text-sm font-medium text-primary/80">Steps</div>
           {Array.from({ length: STEPS }, (_, i) => (
             <div key={i} className="text-center text-xs text-primary/60">
               {i + 1}
@@ -441,11 +442,11 @@ export const Sequencer = () => {
           ))}
         </div>
 
-        <div className="space-y-3">
-          <div className="text-sm font-medium text-primary mb-2">Piano Notes</div>
+        <div className="space-y-3 min-w-[612px]">
+          <div className="text-xs md:text-sm font-medium text-primary mb-2">Piano Notes</div>
           {PIANO_NOTES.map(note => (
             <div key={note} className="grid grid-cols-[100px_repeat(16,32px)] gap-1.5 group">
-              <div className="text-sm text-primary/80 group-hover:text-primary transition-colors">
+              <div className="text-xs md:text-sm text-primary/80 group-hover:text-primary transition-colors">
                 {note}
               </div>
               {Array.from({ length: STEPS }, (_, step) => (
@@ -466,11 +467,11 @@ export const Sequencer = () => {
           ))}
         </div>
 
-        <div className="space-y-3 mt-6">
-          <div className="text-sm font-medium text-primary mb-2">Drum Sounds</div>
+        <div className="space-y-3 mt-6 min-w-[612px]">
+          <div className="text-xs md:text-sm font-medium text-primary mb-2">Drum Sounds</div>
           {DRUM_SOUNDS.map(sound => (
             <div key={sound} className="grid grid-cols-[100px_repeat(16,32px)] gap-1.5 group">
-              <div className="text-sm text-primary/80 group-hover:text-primary transition-colors">
+              <div className="text-xs md:text-sm text-primary/80 group-hover:text-primary transition-colors">
                 {sound}
               </div>
               {Array.from({ length: STEPS }, (_, step) => (
