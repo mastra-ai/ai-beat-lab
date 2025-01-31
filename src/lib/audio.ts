@@ -13,18 +13,18 @@ export const playNote = (frequency: number, duration: number = 0.5) => {
   const ctx = getAudioContext();
   const oscillator = ctx.createOscillator();
   const gainNode = ctx.createGain();
-  
+
   oscillator.connect(gainNode);
   gainNode.connect(ctx.destination);
-  
+
   oscillator.type = 'sine';
   oscillator.frequency.setValueAtTime(frequency, ctx.currentTime);
-  
+
   // Apply simple envelope
   gainNode.gain.setValueAtTime(0, ctx.currentTime);
   gainNode.gain.linearRampToValueAtTime(0.5, ctx.currentTime + 0.01);
   gainNode.gain.linearRampToValueAtTime(0, ctx.currentTime + duration);
-  
+
   oscillator.start(ctx.currentTime);
   oscillator.stop(ctx.currentTime + duration);
 };
@@ -59,10 +59,10 @@ const drumSamples: { [key: string]: AudioBuffer | null } = {
 export const loadDrumSamples = async () => {
   const ctx = getAudioContext();
   const sampleUrls = {
-    'Kick': '/samples/kick.wav',
-    'Snare': '/samples/snare.wav',
-    'Hi-Hat': '/samples/hihat.wav',
-    'Clap': '/samples/clap.wav',
+    'Kick': '/samples/kick-808.wav',
+    'Snare': '/samples/snare-808.wav',
+    'Hi-Hat': '/samples/hihat-808.wav',
+    'Clap': '/samples/clap-808.wav',
   };
 
   for (const [name, url] of Object.entries(sampleUrls)) {
@@ -79,15 +79,15 @@ export const loadDrumSamples = async () => {
 export const playDrumSound = (name: string) => {
   const ctx = getAudioContext();
   const buffer = drumSamples[name];
-  
+
   if (buffer) {
     const source = ctx.createBufferSource();
     const gainNode = ctx.createGain();
-    
+
     source.buffer = buffer;
     source.connect(gainNode);
     gainNode.connect(ctx.destination);
-    
+
     gainNode.gain.setValueAtTime(0.5, ctx.currentTime);
     source.start(ctx.currentTime);
   }
