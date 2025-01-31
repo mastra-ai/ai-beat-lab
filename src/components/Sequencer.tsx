@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Play, Pause, Square, Music2, Volume2, Settings2 } from 'lucide-react';
+import { Play, Pause, Square, Music2, Volume2, Settings2, Loader2 } from 'lucide-react';
 import { Button } from './ui/button';
 import { Input } from './ui/input';
 import { playNoteByName, playDrumSound, loadDrumSamples, getAudioContext } from '@/lib/audio';
@@ -20,6 +20,7 @@ export const Sequencer = () => {
   const [drumSequence, setDrumSequence] = useState<Record<string, number[]>>(
     Object.fromEntries(DRUM_SOUNDS.map(sound => [sound, []]))
   );
+  const [isGenerating, setIsGenerating] = useState(false);
   const sequencerInterval = useRef<number | null>(null);
 
   useEffect(() => {
@@ -58,195 +59,195 @@ export const Sequencer = () => {
 
   const handleGenerateSequence = async () => {
     if (!prompt) return;
+    setIsGenerating(true);
 
-    const ctx = getAudioContext();
-    ctx.resume();
+    try {
+      const ctx = getAudioContext();
+      ctx.resume();
 
-    const uri = `http://localhost:4111/api/agents/musicAgent/generate`
-    const refAgent = `http://localhost:4111/api/agents/musicReferenceAgent/generate`
-    // const url = `https://mastra-test-f6ebc6bf-b666-4a3e-87bb-fa6d7bc60c48.default.mastra.cloud/api/agents/musicAgent/generate`
+      const refAgent = `http://localhost:4111/api/agents/musicReferenceAgent/generate`;
+      const response = await window.fetch(refAgent, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          messages: [`Please analyze the users request "${prompt}"`],
+        })
+      });
 
-    const response = await window.fetch(refAgent, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        messages: [`Please analyze the users request "${prompt}"`],
-      })
-    })
+      const d = await response.json();
+      setReference(d.text);
 
-    const d = await response.json();
-
-    setReference(d.text);
-
-    window.fetch(uri, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        messages: [`Please make me a beat based on this information: ${d.text}`],
-        output: {
-          "$schema": "http://json-schema.org/draft-07/schema#",
-          "type": "object",
-          "additionalProperties": false,
-          "required": [
-            "Kick",
-            "Snare",
-            "Hi-Hat",
-            "Clap",
-            "Open Hat",
-            "Tom",
-            "Crash",
-            "Ride",
-            "Shaker",
-            "Cowbell",
-            "C5",
-            "B4",
-            "A4",
-            "G4",
-            "F4",
-            "E4",
-            "D4",
-            "C4",
-            "B3",
-            "A3",
-            "G3",
-          ],
-          "properties": {
-            "C5": {
-              "type": "array",
-              "items": {
-                "type": "integer"
-              }
-            },
-            "B4": {
-              "type": "array",
-              "items": {
-                "type": "integer"
-              }
-            },
-            "A4": {
-              "type": "array",
-              "items": {
-                "type": "integer"
-              }
-            },
-            "G4": {
-              "type": "array",
-              "items": {
-                "type": "integer"
-              }
-            },
-            "F4": {
-              "type": "array",
-              "items": {
-                "type": "integer"
-              }
-            },
-            "E4": {
-              "type": "array",
-              "items": {
-                "type": "integer"
-              }
-            },
-            "D4": {
-              "type": "array",
-              "items": {
-                "type": "integer"
-              }
-            },
-            "C4": {
-              "type": "array",
-              "items": {
-                "type": "integer"
-              }
-            },
-            "B3": {
-              "type": "array",
-              "items": {
-                "type": "integer"
-              }
-            },
-            "A3": {
-              "type": "array",
-              "items": {
-                "type": "integer"
-              }
-            },
-            "G3": {
-              "type": "array",
-              "items": {
-                "type": "integer"
-              }
-            },
-            "Kick": {
-              "type": "array",
-              "items": {
-                "type": "integer"
-              }
-            },
-            "Snare": {
-              "type": "array",
-              "items": {
-                "type": "integer"
-              }
-            },
-            "Hi-Hat": {
-              "type": "array",
-              "items": {
-                "type": "integer"
-              }
-            },
-            "Clap": {
-              "type": "array",
-              "items": {
-                "type": "integer"
-              }
-            },
-            "Open Hat": {
-              "type": "array",
-              "items": {
-                "type": "integer"
-              }
-            },
-            "Tom": {
-              "type": "array",
-              "items": {
-                "type": "integer"
-              }
-            },
-            "Crash": {
-              "type": "array",
-              "items": {
-                "type": "integer"
-              }
-            },
-            "Ride": {
-              "type": "array",
-              "items": {
-                "type": "integer"
-              }
-            },
-            "Shaker": {
-              "type": "array",
-              "items": {
-                "type": "integer"
-              }
-            },
-            "Cowbell": {
-              "type": "array",
-              "items": {
-                "type": "integer"
+      const uri = `http://localhost:4111/api/agents/musicAgent/generate`;
+      const result = await window.fetch(uri, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          messages: [`Please make me a beat based on this information: ${d.text}`],
+          output: {
+            "$schema": "http://json-schema.org/draft-07/schema#",
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "Kick",
+              "Snare",
+              "Hi-Hat",
+              "Clap",
+              "Open Hat",
+              "Tom",
+              "Crash",
+              "Ride",
+              "Shaker",
+              "Cowbell",
+              "C5",
+              "B4",
+              "A4",
+              "G4",
+              "F4",
+              "E4",
+              "D4",
+              "C4",
+              "B3",
+              "A3",
+              "G3",
+            ],
+            "properties": {
+              "C5": {
+                "type": "array",
+                "items": {
+                  "type": "integer"
+                }
+              },
+              "B4": {
+                "type": "array",
+                "items": {
+                  "type": "integer"
+                }
+              },
+              "A4": {
+                "type": "array",
+                "items": {
+                  "type": "integer"
+                }
+              },
+              "G4": {
+                "type": "array",
+                "items": {
+                  "type": "integer"
+                }
+              },
+              "F4": {
+                "type": "array",
+                "items": {
+                  "type": "integer"
+                }
+              },
+              "E4": {
+                "type": "array",
+                "items": {
+                  "type": "integer"
+                }
+              },
+              "D4": {
+                "type": "array",
+                "items": {
+                  "type": "integer"
+                }
+              },
+              "C4": {
+                "type": "array",
+                "items": {
+                  "type": "integer"
+                }
+              },
+              "B3": {
+                "type": "array",
+                "items": {
+                  "type": "integer"
+                }
+              },
+              "A3": {
+                "type": "array",
+                "items": {
+                  "type": "integer"
+                }
+              },
+              "G3": {
+                "type": "array",
+                "items": {
+                  "type": "integer"
+                }
+              },
+              "Kick": {
+                "type": "array",
+                "items": {
+                  "type": "integer"
+                }
+              },
+              "Snare": {
+                "type": "array",
+                "items": {
+                  "type": "integer"
+                }
+              },
+              "Hi-Hat": {
+                "type": "array",
+                "items": {
+                  "type": "integer"
+                }
+              },
+              "Clap": {
+                "type": "array",
+                "items": {
+                  "type": "integer"
+                }
+              },
+              "Open Hat": {
+                "type": "array",
+                "items": {
+                  "type": "integer"
+                }
+              },
+              "Tom": {
+                "type": "array",
+                "items": {
+                  "type": "integer"
+                }
+              },
+              "Crash": {
+                "type": "array",
+                "items": {
+                  "type": "integer"
+                }
+              },
+              "Ride": {
+                "type": "array",
+                "items": {
+                  "type": "integer"
+                }
+              },
+              "Shaker": {
+                "type": "array",
+                "items": {
+                  "type": "integer"
+                }
+              },
+              "Cowbell": {
+                "type": "array",
+                "items": {
+                  "type": "integer"
+                }
               }
             }
           }
-        }
-      }),
-    }).then(res => res.json()).then(data => {
-      console.log(data.object);
+        }),
+      });
 
+      const data = await result.json();
+      
       const pianoSequence = {
         "C5": data.object.C5 || [],
         "B4": data.object.B4 || [],
@@ -259,8 +260,7 @@ export const Sequencer = () => {
         'B3': data.object.B3 || [],
         'A3': data.object.A3 || [],
         'G3': data.object.G3 || [],
-
-      }
+      };
 
       const drumSequence = {
         "Kick": data.object.Kick || [],
@@ -273,13 +273,16 @@ export const Sequencer = () => {
         "Ride": data.object.Ride || [],
         "Shaker": data.object.Shaker || [],
         "Cowbell": data.object.Cowbell || [],
-      }
+      };
 
       setDrumSequence(drumSequence);
       setPianoSequence(pianoSequence);
-
       stopSequence();
-    });
+    } catch (error) {
+      console.error('Error generating sequence:', error);
+    } finally {
+      setIsGenerating(false);
+    }
   };
 
   const playSequence = () => {
@@ -377,12 +380,21 @@ export const Sequencer = () => {
           value={prompt}
           onChange={(e) => setPrompt(e.target.value)}
           className="flex-1 bg-background/50 border-primary/20 focus:border-primary"
+          disabled={isGenerating}
         />
         <Button 
           onClick={handleGenerateSequence}
-          className="px-8 bg-primary text-primary-foreground hover:bg-primary/90"
+          className="px-8 bg-primary text-primary-foreground hover:bg-primary/90 disabled:opacity-50"
+          disabled={isGenerating}
         >
-          Generate
+          {isGenerating ? (
+            <>
+              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              Generating...
+            </>
+          ) : (
+            'Generate'
+          )}
         </Button>
       </div>
 
