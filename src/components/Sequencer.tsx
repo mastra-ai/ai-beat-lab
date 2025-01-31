@@ -366,6 +366,29 @@ export const Sequencer = () => {
         </div>
       )}
 
+      <div className="flex gap-4 mb-6">
+        <Input
+          placeholder="Enter your music prompt..."
+          value={prompt}
+          onChange={(e) => setPrompt(e.target.value)}
+          className="flex-1"
+        />
+        <Button 
+          onClick={handleGenerateSequence}
+          disabled={isGenerating || !prompt}
+          className="min-w-[120px]"
+        >
+          {isGenerating ? (
+            <>
+              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              Generating...
+            </>
+          ) : (
+            'Generate'
+          )}
+        </Button>
+      </div>
+
       {reference && (
         <div className="mb-6 p-4 bg-primary/5 border border-primary/20 rounded-lg text-primary/90">
           <div className="flex items-center gap-2">
