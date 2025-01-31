@@ -7,7 +7,7 @@ const Index = () => {
         <Sequencer />
       </div>
       <footer className="text-center text-sm text-primary/60 mt-8">
-        Built with mastra.ai
+        Built with <a href="https://mastra.ai" target="_blank" rel="noopener noreferrer" className="hover:text-primary transition-colors">mastra.ai</a>
       </footer>
     </div>
   );
