@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Play, Pause, Square } from 'lucide-react';
 import { Button } from './ui/button';
 import { Input } from './ui/input';
-import { playNoteByName, playDrumSound } from '@/lib/audio';
+import { playNoteByName, playDrumSound, loadDrumSamples, getAudioContext } from '@/lib/audio';
 
 const STEPS = 16;
 const PIANO_NOTES = ['C4', 'B3', 'A3', 'G3'];
@@ -12,6 +12,7 @@ export const Sequencer = () => {
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentStep, setCurrentStep] = useState(0);
   const [prompt, setPrompt] = useState('');
+  const [isAudioInitialized, setIsAudioInitialized] = useState(false);
   const [pianoSequence, setPianoSequence] = useState<Record<string, number[]>>(
     Object.fromEntries(PIANO_NOTES.map(note => [note, []]))
   );
@@ -21,6 +22,12 @@ export const Sequencer = () => {
   const sequencerInterval = useRef<number | null>(null);
 
   useEffect(() => {
+    const initAudio = async () => {
+      await loadDrumSamples();
+      setIsAudioInitialized(true);
+    };
+    initAudio();
+
     return () => {
       if (sequencerInterval.current) {
         clearInterval(sequencerInterval.current);
@@ -49,19 +56,16 @@ export const Sequencer = () => {
   };
 
   const generateRandomSequence = () => {
-    // Mock different patterns based on keywords in the prompt
     const isUpbeat = prompt.toLowerCase().includes('upbeat');
     const isJazz = prompt.toLowerCase().includes('jazz');
     const hasHeavyKicks = prompt.toLowerCase().includes('heavy') && prompt.toLowerCase().includes('kick');
 
-    // Generate new sequences
     const newPianoSequence: Record<string, number[]> = {};
     const newDrumSequence: Record<string, number[]> = {};
 
-    // Generate piano sequence
     PIANO_NOTES.forEach(note => {
       const steps: number[] = [];
-      const numberOfSteps = isJazz ? 4 : (isUpbeat ? 6 : 3); // Jazz uses fewer, more strategic notes
+      const numberOfSteps = isJazz ? 4 : (isUpbeat ? 6 : 3);
 
       while (steps.length < numberOfSteps) {
         const step = Math.floor(Math.random() * STEPS);
@@ -72,7 +76,6 @@ export const Sequencer = () => {
       newPianoSequence[note] = steps.sort((a, b) => a - b);
     });
 
-    // Generate drum sequence
     DRUM_SOUNDS.forEach(sound => {
       const steps: number[] = [];
       let numberOfSteps;
@@ -81,7 +84,7 @@ export const Sequencer = () => {
         numberOfSteps = hasHeavyKicks ? 8 : 4;
       } else if (sound === 'Hi-Hat') {
         numberOfSteps = isUpbeat ? 12 : 8;
-      } else { // Snare
+      } else {
         numberOfSteps = isJazz ? 6 : 4;
       }
 
@@ -99,6 +102,9 @@ export const Sequencer = () => {
 
   const handleGenerateSequence = () => {
     if (!prompt) return;
+
+    const ctx = getAudioContext();
+    ctx.resume();
 
     window.fetch('https://mastra-test-3b7df025-7faf-4058-9684-34e9a2237830.default.mastra.cloud/api/agents/musicAgent/generate', {
       method: 'POST',
@@ -168,20 +174,17 @@ export const Sequencer = () => {
       }
 
       setDrumSequence(drumSequence);
-    })
+    });
 
-    // Simulate API call delay
     const { newPianoSequence } = generateRandomSequence();
-
-    // Update sequences
     setPianoSequence(newPianoSequence);
-
-    // Stop any existing playback
     stopSequence();
-
   };
 
   const playSequence = () => {
+    const ctx = getAudioContext();
+    ctx.resume();
+    
     setIsPlaying(true);
     setCurrentStep(0);
 
@@ -189,14 +192,12 @@ export const Sequencer = () => {
       setCurrentStep(prev => {
         const nextStep = (prev + 1) % STEPS;
 
-        // Play piano notes for current step
         Object.entries(pianoSequence).forEach(([note, steps]) => {
           if (steps.includes(prev)) {
             playNoteByName(note);
           }
         });
 
-        // Play drum sounds for current step
         Object.entries(drumSequence).forEach(([sound, steps]) => {
           if (steps.includes(prev)) {
             playDrumSound(sound);
@@ -205,7 +206,7 @@ export const Sequencer = () => {
 
         return nextStep;
       });
-    }, 200); // 120 BPM
+    }, 200);
   };
 
   const stopSequence = () => {
@@ -243,6 +244,12 @@ export const Sequencer = () => {
         </div>
       </div>
 
+      {!isAudioInitialized && (
+        <div className="mb-4 p-4 bg-yellow-100 rounded-lg text-black">
+          <p>Loading audio samples...</p>
+        </div>
+      )}
+
       <div className="flex gap-2 mb-6">
         <Input
           placeholder="Describe the beat you want (e.g. 'upbeat jazz rhythm with heavy kicks')"
@@ -256,7 +263,6 @@ export const Sequencer = () => {
       </div>
 
       <div className="space-y-6">
-        {/* Step numbers */}
         <div className="grid grid-cols-[120px_repeat(16,1fr)] gap-1">
           <div className="text-sm font-medium">Steps</div>
           {Array.from({ length: STEPS }, (_, i) => (
@@ -266,7 +272,6 @@ export const Sequencer = () => {
           ))}
         </div>
 
-        {/* Piano sequence */}
         <div className="space-y-1">
           <div className="text-sm font-medium mb-2">Piano Notes</div>
           {PIANO_NOTES.map(note => (
@@ -290,7 +295,6 @@ export const Sequencer = () => {
           ))}
         </div>
 
-        {/* Drum sequence */}
         <div className="space-y-1">
           <div className="text-sm font-medium mb-2">Drum Sounds</div>
           {DRUM_SOUNDS.map(sound => (
