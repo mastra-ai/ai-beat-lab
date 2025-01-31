@@ -48,9 +48,64 @@ export const Sequencer = () => {
     playDrumSound(sound);
   };
 
+  const generateRandomSequence = () => {
+    // Mock different patterns based on keywords in the prompt
+    const isUpbeat = prompt.toLowerCase().includes('upbeat');
+    const isJazz = prompt.toLowerCase().includes('jazz');
+    const hasHeavyKicks = prompt.toLowerCase().includes('heavy') && prompt.toLowerCase().includes('kick');
+
+    // Generate new sequences
+    const newPianoSequence: Record<string, number[]> = {};
+    const newDrumSequence: Record<string, number[]> = {};
+
+    // Generate piano sequence
+    PIANO_NOTES.forEach(note => {
+      const steps: number[] = [];
+      const numberOfSteps = isJazz ? 4 : (isUpbeat ? 6 : 3); // Jazz uses fewer, more strategic notes
+      
+      while (steps.length < numberOfSteps) {
+        const step = Math.floor(Math.random() * STEPS);
+        if (!steps.includes(step)) {
+          steps.push(step);
+        }
+      }
+      newPianoSequence[note] = steps.sort((a, b) => a - b);
+    });
+
+    // Generate drum sequence
+    DRUM_SOUNDS.forEach(sound => {
+      const steps: number[] = [];
+      let numberOfSteps;
+      
+      if (sound === 'Kick') {
+        numberOfSteps = hasHeavyKicks ? 8 : 4;
+      } else if (sound === 'Hi-Hat') {
+        numberOfSteps = isUpbeat ? 12 : 8;
+      } else { // Snare
+        numberOfSteps = isJazz ? 6 : 4;
+      }
+
+      while (steps.length < numberOfSteps) {
+        const step = Math.floor(Math.random() * STEPS);
+        if (!steps.includes(step)) {
+          steps.push(step);
+        }
+      }
+      newDrumSequence[sound] = steps.sort((a, b) => a - b);
+    });
+
+    return { newPianoSequence, newDrumSequence };
+  };
+
   const handleGenerateSequence = () => {
-    // TODO: Implement AI generation based on prompt
-    console.log("Generating sequence for prompt:", prompt);
+    if (!prompt) return;
+    
+    // Simulate API call delay
+    const { newPianoSequence, newDrumSequence } = generateRandomSequence();
+    
+    // Update sequences
+    setPianoSequence(newPianoSequence);
+    setDrumSequence(newDrumSequence);
   };
 
   const playSequence = () => {
