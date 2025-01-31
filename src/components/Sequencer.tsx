@@ -411,7 +411,7 @@ export const Sequencer = () => {
       )}
 
       <div className="space-y-6">
-        <div className="grid grid-cols-[100px_repeat(16,32px)] gap-0.5">
+        <div className="grid grid-cols-[100px_repeat(16,32px)] gap-1.5">
           <div className="text-sm font-medium text-primary/80">Steps</div>
           {Array.from({ length: STEPS }, (_, i) => (
             <div key={i} className="text-center text-xs text-primary/60">
@@ -423,7 +423,7 @@ export const Sequencer = () => {
         <div className="space-y-3">
           <div className="text-sm font-medium text-primary mb-2">Piano Notes</div>
           {PIANO_NOTES.map(note => (
-            <div key={note} className="grid grid-cols-[100px_repeat(16,32px)] gap-0.5 group">
+            <div key={note} className="grid grid-cols-[100px_repeat(16,32px)] gap-1.5 group">
               <div className="text-sm text-primary/80 group-hover:text-primary transition-colors">
                 {note}
               </div>
@@ -448,7 +448,7 @@ export const Sequencer = () => {
         <div className="space-y-3 mt-6">
           <div className="text-sm font-medium text-primary mb-2">Drum Sounds</div>
           {DRUM_SOUNDS.map(sound => (
-            <div key={sound} className="grid grid-cols-[100px_repeat(16,32px)] gap-0.5 group">
+            <div key={sound} className="grid grid-cols-[100px_repeat(16,32px)] gap-1.5 group">
               <div className="text-sm text-primary/80 group-hover:text-primary transition-colors">
                 {sound}
               </div>
