@@ -11,6 +11,7 @@ const DRUM_SOUNDS = ['Kick', 'Snare', 'Hi-Hat', 'Clap', 'Open Hat', 'Tom', 'Cras
 export const Sequencer = () => {
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentStep, setCurrentStep] = useState(0);
+  const [reference, setReference] = useState('');
   const [prompt, setPrompt] = useState('');
   const [isAudioInitialized, setIsAudioInitialized] = useState(false);
   const [pianoSequence, setPianoSequence] = useState<Record<string, number[]>>(
@@ -55,59 +56,29 @@ export const Sequencer = () => {
     playDrumSound(sound);
   };
 
-  const generateRandomSequence = () => {
-    const isUpbeat = prompt.toLowerCase().includes('upbeat');
-    const isJazz = prompt.toLowerCase().includes('jazz');
-    const hasHeavyKicks = prompt.toLowerCase().includes('heavy') && prompt.toLowerCase().includes('kick');
-
-    const newPianoSequence: Record<string, number[]> = {};
-    const newDrumSequence: Record<string, number[]> = {};
-
-    PIANO_NOTES.forEach(note => {
-      const steps: number[] = [];
-      const numberOfSteps = isJazz ? 4 : (isUpbeat ? 6 : 3);
-
-      while (steps.length < numberOfSteps) {
-        const step = Math.floor(Math.random() * STEPS);
-        if (!steps.includes(step)) {
-          steps.push(step);
-        }
-      }
-      newPianoSequence[note] = steps.sort((a, b) => a - b);
-    });
-
-    DRUM_SOUNDS.forEach(sound => {
-      const steps: number[] = [];
-      let numberOfSteps;
-
-      if (sound === 'Kick') {
-        numberOfSteps = hasHeavyKicks ? 8 : 4;
-      } else if (sound === 'Hi-Hat') {
-        numberOfSteps = isUpbeat ? 12 : 8;
-      } else {
-        numberOfSteps = isJazz ? 6 : 4;
-      }
-
-      while (steps.length < numberOfSteps) {
-        const step = Math.floor(Math.random() * STEPS);
-        if (!steps.includes(step)) {
-          steps.push(step);
-        }
-      }
-      newDrumSequence[sound] = steps.sort((a, b) => a - b);
-    });
-
-    return { newPianoSequence, newDrumSequence };
-  };
-
-  const handleGenerateSequence = () => {
+  const handleGenerateSequence = async () => {
     if (!prompt) return;
 
     const ctx = getAudioContext();
     ctx.resume();
 
     const uri = `http://localhost:4111/api/agents/musicAgent/generate`
+    const refAgent = `http://localhost:4111/api/agents/musicReferenceAgent/generate`
     // const url = `https://mastra-test-f6ebc6bf-b666-4a3e-87bb-fa6d7bc60c48.default.mastra.cloud/api/agents/musicAgent/generate`
+
+    const response = await window.fetch(refAgent, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        messages: [`Please analyze the users request "${prompt}"`],
+      })
+    })
+
+    const d = await response.json();
+
+    setReference(d.text);
 
     window.fetch(uri, {
       method: 'POST',
@@ -115,7 +86,7 @@ export const Sequencer = () => {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        messages: [`Please make me a beautiful beat based on "${prompt}"`],
+        messages: [`Please make me a beat based on this information: ${d.text}`],
         output: {
           "$schema": "http://json-schema.org/draft-07/schema#",
           "type": "object",
@@ -377,6 +348,12 @@ export const Sequencer = () => {
       {!isAudioInitialized && (
         <div className="mb-4 p-4 bg-yellow-100 rounded-lg text-black">
           <p>Loading audio samples...</p>
+        </div>
+      )}
+
+      {reference && (
+        <div className="mb-4 p-4 bg-yellow-100 rounded-lg text-black">
+          <p>{reference}</p>
         </div>
       )}
 
