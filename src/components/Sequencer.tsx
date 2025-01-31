@@ -77,7 +77,7 @@ export const Sequencer = () => {
       const ctx = getAudioContext();
       ctx.resume();
 
-      const refAgent = getMastraFetchUrl() + '/musicReferenceAgent/generate';
+      const refAgent = getMastraFetchUrl() + '/api/agents/musicReferenceAgent/generate';
       const response = await window.fetch(refAgent, {
         method: 'POST',
         headers: {
@@ -91,7 +91,7 @@ export const Sequencer = () => {
       const d = await response.json();
       setReference(d.text);
 
-      const uri = getMastraFetchUrl() + '/agents/musicAgent/generate';
+      const uri = getMastraFetchUrl() + '/api/agents/musicAgent/generate';
       const result = await window.fetch(uri, {
         method: 'POST',
         headers: {
