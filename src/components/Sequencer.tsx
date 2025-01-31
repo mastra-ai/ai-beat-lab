@@ -328,9 +328,12 @@ export const Sequencer = () => {
       <div className="flex items-center justify-between mb-8">
         <div className="flex items-center gap-3">
           <Music2 className="h-8 w-8 text-primary" />
-          <h1 className="text-4xl font-bold bg-gradient-to-r from-primary to-primary/60 bg-clip-text text-transparent">
-            Mastra Music Studio
-          </h1>
+          <div className="space-y-1">
+            <h1 className="text-4xl font-bold bg-gradient-to-r from-primary to-primary/60 bg-clip-text text-transparent">
+              Mastra Music Studio
+            </h1>
+            <p className="text-sm text-primary/70">Where AI drops beats and humans drop jaws</p>
+          </div>
         </div>
         <div className="flex items-center gap-4">
           <Button
