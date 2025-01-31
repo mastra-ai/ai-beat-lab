@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Play, Pause, Square } from 'lucide-react';
 import { Button } from './ui/button';
 import { playNoteByName, playDrumSound } from '@/lib/audio';
@@ -16,6 +16,15 @@ export const Sequencer = () => {
   const [drumSequence, setDrumSequence] = useState<Record<string, number[]>>(
     Object.fromEntries(DRUM_SOUNDS.map(sound => [sound, []]))
   );
+  const sequencerInterval = useRef<number | null>(null);
+
+  useEffect(() => {
+    return () => {
+      if (sequencerInterval.current) {
+        clearInterval(sequencerInterval.current);
+      }
+    };
+  }, []);
 
   const togglePianoStep = (note: string, step: number) => {
     setPianoSequence(prev => ({
@@ -37,6 +46,42 @@ export const Sequencer = () => {
     playDrumSound(sound);
   };
 
+  const playSequence = () => {
+    setIsPlaying(true);
+    setCurrentStep(0);
+    
+    sequencerInterval.current = window.setInterval(() => {
+      setCurrentStep(prev => {
+        const nextStep = (prev + 1) % STEPS;
+        
+        // Play piano notes for current step
+        Object.entries(pianoSequence).forEach(([note, steps]) => {
+          if (steps.includes(prev)) {
+            playNoteByName(note);
+          }
+        });
+        
+        // Play drum sounds for current step
+        Object.entries(drumSequence).forEach(([sound, steps]) => {
+          if (steps.includes(prev)) {
+            playDrumSound(sound);
+          }
+        });
+        
+        return nextStep;
+      });
+    }, 200); // 120 BPM
+  };
+
+  const stopSequence = () => {
+    if (sequencerInterval.current) {
+      clearInterval(sequencerInterval.current);
+      sequencerInterval.current = null;
+    }
+    setIsPlaying(false);
+    setCurrentStep(0);
+  };
+
   return (
     <div className="bg-muted rounded-lg p-6 animate-slide-in">
       <div className="flex items-center justify-between mb-6">
@@ -45,7 +90,7 @@ export const Sequencer = () => {
           <Button
             variant="secondary"
             size="icon"
-            onClick={() => setIsPlaying(!isPlaying)}
+            onClick={() => isPlaying ? stopSequence() : playSequence()}
             className="transport-button"
           >
             {isPlaying ? <Pause className="h-4 w-4" /> : <Play className="h-4 w-4" />}
@@ -54,7 +99,7 @@ export const Sequencer = () => {
             <Button
               variant="secondary"
               size="icon"
-              onClick={() => setIsPlaying(false)}
+              onClick={stopSequence}
               className="transport-button"
             >
               <Square className="h-4 w-4" />
@@ -88,6 +133,8 @@ export const Sequencer = () => {
                     h-8 rounded cursor-pointer transition-colors
                     ${pianoSequence[note].includes(step)
                       ? 'bg-primary'
+                      : step === currentStep && isPlaying
+                      ? 'bg-primary/30'
                       : 'bg-secondary hover:bg-secondary/80'}
                   `}
                 />
@@ -110,6 +157,8 @@ export const Sequencer = () => {
                     h-8 rounded cursor-pointer transition-colors
                     ${drumSequence[sound].includes(step)
                       ? 'bg-primary'
+                      : step === currentStep && isPlaying
+                      ? 'bg-primary/30'
                       : 'bg-secondary hover:bg-secondary/80'}
                   `}
                 />
