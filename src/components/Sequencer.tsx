@@ -366,6 +366,50 @@ export const Sequencer = () => {
         </div>
       )}
 
+      <div className="flex gap-4 mb-6">
+        <Input
+          placeholder="Enter your music prompt..."
+          value={prompt}
+          onChange={(e) => setPrompt(e.target.value)}
+          className="flex-1"
+        />
+        <Button 
+          onClick={handleGenerateSequence}
+          disabled={isGenerating || !prompt}
+          className="min-w-[120px]"
+        >
+          {isGenerating ? (
+            <>
+              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              Generating...
+            </>
+          ) : (
+            'Generate'
+          )}
+        </Button>
+      </div>
+
+      {reference && (
+        <div className="mb-6 p-4 bg-primary/5 border border-primary/20 rounded-lg">
+          <div className="flex gap-3">
+            <Settings2 className="h-5 w-5 flex-shrink-0 mt-1 text-primary/80" />
+            <div className="prose prose-invert prose-sm max-w-none w-full">
+              <ReactMarkdown
+                components={{
+                  p: ({ children }) => <p className="text-primary/90 leading-relaxed mb-2">{children}</p>,
+                  ul: ({ children }) => <ul className="list-disc list-inside space-y-1 text-primary/90">{children}</ul>,
+                  li: ({ children }) => <li className="text-primary/90">{children}</li>,
+                  strong: ({ children }) => <strong className="font-semibold text-primary">{children}</strong>,
+                  em: ({ children }) => <em className="text-primary/90 italic">{children}</em>,
+                }}
+              >
+                {reference}
+              </ReactMarkdown>
+            </div>
+          </div>
+        </div>
+      )}
+
       <div className="space-y-6">
         <div className="grid grid-cols-[100px_repeat(16,32px)] gap-0.5">
           <div className="text-sm font-medium text-primary/80">Steps</div>
