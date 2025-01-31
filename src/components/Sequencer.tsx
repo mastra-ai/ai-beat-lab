@@ -413,7 +413,7 @@ export const Sequencer = () => {
           </button>
           {isReferenceExpanded && (
             <div className="p-4 pt-0">
-              <div className="prose prose-invert prose-sm max-w-none w-full">
+              <div className="max-h-[200px] overflow-y-auto scrollbar-thin scrollbar-thumb-primary/20 scrollbar-track-transparent prose prose-invert prose-sm max-w-none w-full">
                 <ReactMarkdown
                   components={{
                     p: ({ children }) => <p className="text-primary/90 leading-relaxed mb-2">{children}</p>,
