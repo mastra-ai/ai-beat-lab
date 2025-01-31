@@ -117,8 +117,72 @@ export const Sequencer = () => {
           "$schema": "http://json-schema.org/draft-07/schema#",
           "type": "object",
           "additionalProperties": false,
-          "required": ["Kick", "Snare", "Hi-Hat", "C4", "B3", "A3", "G3"],
+          "required": [
+            "Kick",
+            "Snare",
+            "Hi-Hat",
+            "Clap",
+            "Open Hat",
+            "Tom",
+            "Crash",
+            "Ride",
+            "Shaker",
+            "Cowbell",
+            "C5",
+            "B4",
+            "A4",
+            "G4",
+            "F4",
+            "E4",
+            "D4",
+            "C4",
+            "B3",
+            "A3",
+            "G3",
+          ],
           "properties": {
+            "C5": {
+              "type": "array",
+              "items": {
+                "type": "integer"
+              }
+            },
+            "B4": {
+              "type": "array",
+              "items": {
+                "type": "integer"
+              }
+            },
+            "A4": {
+              "type": "array",
+              "items": {
+                "type": "integer"
+              }
+            },
+            "G4": {
+              "type": "array",
+              "items": {
+                "type": "integer"
+              }
+            },
+            "F4": {
+              "type": "array",
+              "items": {
+                "type": "integer"
+              }
+            },
+            "E4": {
+              "type": "array",
+              "items": {
+                "type": "integer"
+              }
+            },
+            "D4": {
+              "type": "array",
+              "items": {
+                "type": "integer"
+              }
+            },
             "C4": {
               "type": "array",
               "items": {
@@ -168,16 +232,31 @@ export const Sequencer = () => {
       console.log(data.object);
 
       const pianoSequence = {
-        'C4': data.object.C4 || [],
+        "C5": data.object.C5 || [],
+        "B4": data.object.B4 || [],
+        "A4": data.object.A4 || [],
+        "G4": data.object.G4 || [],
+        "F4": data.object.F4 || [],
+        "E4": data.object.E4 || [],
+        "D4": data.object.D4 || [],
+        "C4": data.object.C4 || [],
         'B3': data.object.B3 || [],
         'A3': data.object.A3 || [],
         'G3': data.object.G3 || [],
+
       }
 
       const drumSequence = {
-        'Kick': data.object.Kick || [],
-        'Snare': data.object.Snare || [],
-        'Hi-Hat': data.object['Hi-Hat'] || [],
+        "Kick": data.object.Kick || [],
+        "Snare": data.object.Snare || [],
+        "Hi-Hat": data.object?.['Hi-Hat'] || [],
+        "Clap": data.object.Clap || [],
+        "Open Hat": data.object['Open-Hat'] || [],
+        "Tom": data.object.Tom || [],
+        "Crash": data.object.Crash || [],
+        "Ride": data.object.Ride || [],
+        "Shaker": data.object.Shaker || [],
+        "Cowbell": data.object.Cowbell || [],
       }
 
       setDrumSequence(drumSequence);
