@@ -390,11 +390,21 @@ export const Sequencer = () => {
       </div>
 
       {reference && (
-        <div className="mb-6 p-4 bg-primary/5 border border-primary/20 rounded-lg text-primary/90">
-          <div className="flex items-center gap-2">
-            <Settings2 className="h-5 w-5 flex-shrink-0" />
-            <div className="prose prose-invert prose-sm max-w-none">
-              <ReactMarkdown>{reference}</ReactMarkdown>
+        <div className="mb-6 p-4 bg-primary/5 border border-primary/20 rounded-lg">
+          <div className="flex gap-3">
+            <Settings2 className="h-5 w-5 flex-shrink-0 mt-1 text-primary/80" />
+            <div className="prose prose-invert prose-sm max-w-none w-full">
+              <ReactMarkdown
+                components={{
+                  p: ({ children }) => <p className="text-primary/90 leading-relaxed mb-2">{children}</p>,
+                  ul: ({ children }) => <ul className="list-disc list-inside space-y-1 text-primary/90">{children}</ul>,
+                  li: ({ children }) => <li className="text-primary/90">{children}</li>,
+                  strong: ({ children }) => <strong className="font-semibold text-primary">{children}</strong>,
+                  em: ({ children }) => <em className="text-primary/90 italic">{children}</em>,
+                }}
+              >
+                {reference}
+              </ReactMarkdown>
             </div>
           </div>
         </div>
