@@ -10,6 +10,15 @@ const STEPS = 16;
 const PIANO_NOTES = ['C5', 'B4', 'A4', 'G4', 'F4', 'E4', 'D4', 'C4', 'B3', 'A3', 'G3'];
 const DRUM_SOUNDS = ['Kick', 'Snare', 'HiHat', 'Clap', 'OpenHat', 'Tom', 'Crash', 'Ride', 'Shaker', 'Cowbell'];
 
+
+function getMastraFetchUrl() {
+  if (process.env.NODE_ENV === 'production') {
+    return 'https://mastra-api.vercel.app/api/agents';
+  } else {
+    return 'http://localhost:4111/api/agents';
+  }
+}
+
 export const Sequencer = () => {
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentStep, setCurrentStep] = useState(0);
@@ -68,7 +77,7 @@ export const Sequencer = () => {
       const ctx = getAudioContext();
       ctx.resume();
 
-      const refAgent = `http://localhost:4111/api/agents/musicReferenceAgent/generate`;
+      const refAgent = getMastraFetchUrl() + '/musicReferenceAgent/generate';
       const response = await window.fetch(refAgent, {
         method: 'POST',
         headers: {
@@ -82,7 +91,7 @@ export const Sequencer = () => {
       const d = await response.json();
       setReference(d.text);
 
-      const uri = `http://localhost:4111/api/agents/musicAgent/generate`;
+      const uri = getMastraFetchUrl() + '/agents/musicAgent/generate';
       const result = await window.fetch(uri, {
         method: 'POST',
         headers: {
