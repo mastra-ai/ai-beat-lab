@@ -61,12 +61,16 @@ const drumSamples: { [key: string]: AudioBuffer | null } = {
   'Snare': null,
   'Hi-Hat': null,
   'Clap': null,
+  'Open Hat': null,
+  'Tom': null,
+  'Crash': null,
+  'Ride': null,
+  'Shaker': null,
+  'Cowbell': null,
 };
 
 export const loadDrumSamples = async () => {
   const ctx = getAudioContext();
-
-  // Resume the audio context to handle auto-play policy
   await ctx.resume();
 
   const sampleUrls = {
@@ -74,6 +78,12 @@ export const loadDrumSamples = async () => {
     'Snare': '/samples/snare-808.wav',
     'Hi-Hat': '/samples/hihat-808.wav',
     'Clap': '/samples/clap-808.wav',
+    'Open Hat': '/samples/openhat-808.wav',
+    'Tom': '/samples/tom-808.wav',
+    'Crash': '/samples/crash-808.wav',
+    'Ride': '/samples/ride-acoustic01.wav',
+    'Shaker': '/samples/shaker-analog.wav',
+    'Cowbell': '/samples/cowbell-808.wav',
   };
 
   for (const [name, url] of Object.entries(sampleUrls)) {
@@ -94,7 +104,6 @@ export const loadDrumSamples = async () => {
 export const playDrumSound = async (name: string) => {
   const ctx = getAudioContext();
 
-  // Ensure context is running
   if (ctx.state !== 'running') {
     await ctx.resume();
   }

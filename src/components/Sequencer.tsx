@@ -6,7 +6,7 @@ import { playNoteByName, playDrumSound, loadDrumSamples, getAudioContext } from 
 
 const STEPS = 16;
 const PIANO_NOTES = ['C5', 'B4', 'A4', 'G4', 'F4', 'E4', 'D4', 'C4', 'B3', 'A3', 'G3'];
-const DRUM_SOUNDS = ['Kick', 'Snare', 'Hi-Hat'];
+const DRUM_SOUNDS = ['Kick', 'Snare', 'Hi-Hat', 'Clap', 'Open Hat', 'Tom', 'Crash', 'Ride', 'Shaker', 'Cowbell'];
 
 export const Sequencer = () => {
   const [isPlaying, setIsPlaying] = useState(false);
@@ -327,3 +327,4 @@ export const Sequencer = () => {
     </div>
   );
 };
+
