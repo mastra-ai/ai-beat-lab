@@ -59,19 +59,23 @@ const drumSamples: { [key: string]: AudioBuffer | null } = {
 export const loadDrumSamples = async () => {
   const ctx = getAudioContext();
   const sampleUrls = {
-    'Kick': '/samples/kick-808.wav',
-    'Snare': '/samples/snare-808.wav',
-    'Hi-Hat': '/samples/hihat-808.wav',
-    'Clap': '/samples/clap-808.wav',
+    'Kick': '/samples/kick.wav',
+    'Snare': '/samples/snare.wav',
+    'Hi-Hat': '/samples/hihat.wav',
+    'Clap': '/samples/clap.wav',
   };
 
   for (const [name, url] of Object.entries(sampleUrls)) {
     try {
       const response = await fetch(url);
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
       const arrayBuffer = await response.arrayBuffer();
       drumSamples[name] = await ctx.decodeAudioData(arrayBuffer);
+      console.log(`Successfully loaded drum sample: ${name}`);
     } catch (error) {
-      console.warn(`Failed to load drum sample: ${name}`);
+      console.warn(`Failed to load drum sample: ${name}`, error);
     }
   }
 };
@@ -90,5 +94,7 @@ export const playDrumSound = (name: string) => {
 
     gainNode.gain.setValueAtTime(0.5, ctx.currentTime);
     source.start(ctx.currentTime);
+  } else {
+    console.warn(`Drum sample not loaded: ${name}`);
   }
 };
