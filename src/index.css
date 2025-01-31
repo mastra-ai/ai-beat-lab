@@ -35,3 +35,16 @@
 .transport-button {
   @apply p-3 rounded-full bg-muted hover:bg-primary/80 transition-colors;
 }
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+.animate-pulse {
+  animation: pulse 1s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}

@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { loadDrumSamples, playDrumSound, getAudioContext } from '@/lib/audio';
 import { Button } from '@/components/ui/button';
-import { Play, Pause, Square } from 'lucide-react';
+import { Play, Pause, Square, ArrowRight } from 'lucide-react';
 
 const drumSounds = ['Kick', 'Snare', 'Hi-Hat', 'Clap'];
 const steps = Array.from({ length: 8 }, (_, i) => i);
@@ -59,7 +59,6 @@ export const DrumSequencer = () => {
       setCurrentStep(prev => {
         const nextStep = (prev + 1) % steps.length;
         
-        // Play all active sounds for this step
         Object.entries(activeSteps).forEach(([sound, steps]) => {
           if (steps.includes(prev)) {
             playDrumSound(sound);
@@ -121,6 +120,16 @@ export const DrumSequencer = () => {
       )}
 
       <div className="grid grid-cols-[120px_1fr] gap-4 bg-muted p-4 rounded-lg">
+        <div className="col-span-2 mb-2 flex items-center justify-between px-[120px]">
+          {steps.map((step) => (
+            <div key={step} className="flex flex-col items-center">
+              <span className="text-xs text-gray-400 mb-1">{step + 1}</span>
+              {step === currentStep && isPlaying && (
+                <ArrowRight className="h-3 w-3 text-primary animate-pulse" />
+              )}
+            </div>
+          ))}
+        </div>
         {drumSounds.map((sound) => (
           <React.Fragment key={sound}>
             <div className="font-medium">{sound}</div>
