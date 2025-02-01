@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Play, Pause, Square, Music2, Volume2, Settings2, Loader2, ChevronDown, ChevronUp, Share2 } from 'lucide-react';
+import { Play, Pause, Square, Music2, Volume2, Settings2, Loader2, ChevronDown, ChevronUp, Share2, Download } from 'lucide-react';
 import {
   Select,
   SelectContent,
@@ -14,18 +14,12 @@ import ReactMarkdown from 'react-markdown';
 import { playNoteByName, playDrumSound, loadDrumSamples, getAudioContext } from '@/lib/audio';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { useSearchParams } from 'react-router-dom';
+import { TEMPO_PRESETS } from './constants';
+import { handleExportMidi } from './handleMidi';
 
 const STEPS = 16;
 const PIANO_NOTES = ['C5', 'B4', 'A4', 'G4', 'F4', 'E4', 'D4', 'C4', 'B3', 'A3', 'G3'];
 const DRUM_SOUNDS = ['Kick', 'Snare', 'HiHat', 'Clap', 'OpenHat', 'Tom', 'Crash', 'Ride', 'Shaker', 'Cowbell'];
-
-const TEMPO_PRESETS = {
-  slow: { label: 'Slow', bpm: 90 },
-  medium: { label: 'Medium', bpm: 120 },
-  fast: { label: 'Fast', bpm: 138 },
-  hardstyle: { label: 'Hardstyle', bpm: 160 },
-};
-
 
 function getMastraFetchUrl() {
   if (process.env.NODE_ENV === 'production') {
@@ -445,6 +439,15 @@ export const Sequencer = () => {
               ))}
             </SelectContent>
           </Select>
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={() => handleExportMidi({ toast, tempo, pianoSequence, drumSequence })}
+            className="h-10 w-10 md:h-12 md:w-12 rounded-full hover:bg-primary/20"
+            title="Export MIDI"
+          >
+            <Download className="h-5 w-5 md:h-6 md:w-6 text-primary" />
+          </Button>
           <Button
             variant="ghost"
             size="icon"
