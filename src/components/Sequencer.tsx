@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Play, Pause, Square, Music2, Volume2, Settings2, Loader2, ChevronDown, ChevronUp, Share2, Download } from 'lucide-react';
+import { Play, Pause, Square, Music2, Volume2, Settings2, Loader2, ChevronDown, ChevronUp, Share2, Download, Wand2 } from 'lucide-react';
 import {
   Select,
   SelectContent,
@@ -16,6 +16,7 @@ import { useIsMobile } from '@/hooks/use-mobile';
 import { useSearchParams } from 'react-router-dom';
 import { TEMPO_PRESETS } from './constants';
 import { handleExportMidi } from './handleMidi';
+import { handleGenerateVariation } from './handleVariation';
 
 const STEPS = 16;
 const PIANO_NOTES = ['C5', 'B4', 'A4', 'G4', 'F4', 'E4', 'D4', 'C4', 'B3', 'A3', 'G3'];
@@ -515,6 +516,24 @@ export const Sequencer = () => {
 
       {reference && (
         <div className="mb-6 bg-primary/5 border border-primary/20 rounded-lg overflow-hidden transition-all duration-300">
+
+
+          <Button
+            variant="ghost"
+            size="default"
+            onClick={() => handleGenerateVariation({ pianoSequence, drumSequence, setIsGenerating, setDrumSequence, setPianoSequence, stopSequence, toast })}
+            disabled={isGenerating}
+            className="h-10 md:h-12 full-width rounded-full hover:bg-primary/20"
+            title="Generate Variation"
+          >
+            Try a variation
+            {isGenerating ? (
+              <Loader2 className="h-5 w-5 md:h-6 md:w-6 text-primary animate-spin" />
+            ) : (
+              <Wand2 className="h-5 w-5 md:h-6 md:w-6 text-primary" />
+            )}
+          </Button>
+
           <button
             onClick={() => setIsReferenceExpanded(!isReferenceExpanded)}
             className="w-full p-3 md:p-4 flex items-center justify-between text-left hover:bg-primary/10 transition-colors"
