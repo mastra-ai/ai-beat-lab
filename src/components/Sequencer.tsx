@@ -1,5 +1,12 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Play, Pause, Square, Music2, Volume2, Settings2, Loader2, ChevronDown, ChevronUp, Share2 } from 'lucide-react';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Button } from './ui/button';
 import { Input } from './ui/input';
 import { useToast } from './ui/use-toast';
@@ -11,6 +18,13 @@ import { useSearchParams } from 'react-router-dom';
 const STEPS = 16;
 const PIANO_NOTES = ['C5', 'B4', 'A4', 'G4', 'F4', 'E4', 'D4', 'C4', 'B3', 'A3', 'G3'];
 const DRUM_SOUNDS = ['Kick', 'Snare', 'HiHat', 'Clap', 'OpenHat', 'Tom', 'Crash', 'Ride', 'Shaker', 'Cowbell'];
+
+const TEMPO_PRESETS = {
+  slow: { label: 'Slow', bpm: 90 },
+  medium: { label: 'Medium', bpm: 120 },
+  fast: { label: 'Fast', bpm: 138 },
+  hardstyle: { label: 'Hardstyle', bpm: 160 },
+};
 
 
 function getMastraFetchUrl() {
@@ -27,6 +41,7 @@ export const Sequencer = () => {
   const [reference, setReference] = useState('');
   const [prompt, setPrompt] = useState('');
   const [isAudioInitialized, setIsAudioInitialized] = useState(false);
+  const [tempo, setTempo] = useState<keyof typeof TEMPO_PRESETS>('medium');
   const [pianoSequence, setPianoSequence] = useState<Record<string, number[]>>(
     Object.fromEntries(PIANO_NOTES.map(note => [note, []]))
   );
@@ -86,6 +101,7 @@ export const Sequencer = () => {
     const beatData = {
       piano: pianoSequence,
       drum: drumSequence,
+      tempo: tempo,
     };
 
     const encoded = btoa(JSON.stringify(beatData));
@@ -360,6 +376,9 @@ export const Sequencer = () => {
     setIsPlaying(true);
     setCurrentStep(0);
 
+    const stepDuration = (60 / TEMPO_PRESETS[tempo].bpm) * 1000 / 4; // Convert BPM to milliseconds per step
+
+
     sequencerInterval.current = window.setInterval(() => {
       setCurrentStep(prev => {
         const nextStep = (prev + 1) % STEPS;
@@ -378,7 +397,7 @@ export const Sequencer = () => {
 
         return nextStep;
       });
-    }, 200);
+    }, stepDuration);
   };
 
   const stopSequence = () => {
@@ -405,6 +424,27 @@ export const Sequencer = () => {
           </div>
         </div>
         <div className="flex items-center gap-4">
+          <Select
+            value={tempo}
+            onValueChange={(value: keyof typeof TEMPO_PRESETS) => {
+              setTempo(value);
+              if (isPlaying) {
+                stopSequence();
+                playSequence();
+              }
+            }}
+          >
+            <SelectTrigger className="w-[140px]">
+              <SelectValue placeholder="Select tempo" />
+            </SelectTrigger>
+            <SelectContent>
+              {Object.entries(TEMPO_PRESETS).map(([key, { label, bpm }]) => (
+                <SelectItem key={key} value={key}>
+                  {label} ({bpm} BPM)
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
           <Button
             variant="ghost"
             size="icon"
