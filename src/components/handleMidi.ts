@@ -53,8 +53,8 @@ export const handleExportMidi = ({ toast, tempo, pianoSequence, drumSequence }) 
     });
 
     // Set the tempo
-    const tempoEvent = new MidiWriter.SetTempoEvent({ tempo: bpm });
-    track.addEvent(tempoEvent);
+    const tempoEvent = new MidiWriter.ProgramChangeEvent({ tempo: bpm });
+    track.setTempo(bpm);
 
     // Create a write stream
     const writer = new MidiWriter.Writer(track);
