@@ -1,22 +1,19 @@
-import { Agent } from '@mastra/core';
+import { Agent } from "@mastra/core";
+import { anthropic } from "@ai-sdk/anthropic";
 
 export const musicReferenceAgent = new Agent({
-  name: 'music-reference-agent',
+  name: "music-reference-agent",
   instructions: `
 You are given a style of music, an artist or song as a reference point. 
 First think about what keys and what drum patterns fit this reference point.
 Based on this knowledge, generate a drum pattern and a minimal melody that fits the style.
 Pick a key based on the style of the music. All notes should be in this key.
     `,
-  model: {
-    provider: 'ANTHROPIC',
-    name: "claude-3-5-sonnet-20241022",
-    toolChoice: 'auto',
-  },
-})
+  model: anthropic("claude-3-5-sonnet-20241022"),
+});
 
 export const musicAgent = new Agent({
-  name: 'music-agent',
+  name: "music-agent",
   instructions: `
 
     
@@ -65,9 +62,5 @@ Response format must be:
   }
 }
 `,
-  model: {
-    provider: 'ANTHROPIC',
-    name: 'claude-3-5-sonnet-20241022',
-    toolChoice: 'auto',
-  },
+  model: anthropic("claude-3-5-sonnet-20241022"),
 });
