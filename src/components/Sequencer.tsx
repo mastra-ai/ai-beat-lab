@@ -24,7 +24,7 @@ const DRUM_SOUNDS = ['Kick', 'Snare', 'HiHat', 'Clap', 'OpenHat', 'Tom', 'Crash'
 
 function getMastraFetchUrl() {
   if (process.env.NODE_ENV === 'production') {
-    return 'https://whining-tender-accident-95b472a1-9ed3-42e5-bf98-2b51ec91c0ec.default.mastra.cloud';
+    return 'https://faint-numerous-laptop.mastra.cloud';
   } else {
     return 'http://localhost:4111';
   }
